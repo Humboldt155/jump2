@@ -12,7 +12,6 @@
           </b-input-group-append>
 
         </b-input-group>
-        Модель {{ modelId}}
 
         <b-container>
           <br>
@@ -108,8 +107,7 @@ export default {
   data () {
     return {
       tabIndex: 0,
-      modelId: '200767',
-      modelAdeo: {}
+      modelId: ''
     }
   },
   methods: {
@@ -121,20 +119,13 @@ export default {
       }
     },
     onLoadModel: function () {
-      const vm = this
-      axios.get('http://humboldt155.pythonanywhere.com/api/models/', {
-        params: {
-          id: 'MOD_'.concat(this.modelId)
-        }
-      })
-        .then(response => {
-          vm.modelAdeo = response.data[0]
-        })
-        .catch(e => {
-          this.errors.push(e)
-        })
-      this.$store.commit('setModelId', this.modelId)
-      this.$store.commit('setModelAdeo', this.modelAdeo)
+      this.$store.dispatch('setModelAdeo', this.modelId)
+      this.$store.dispatch('setModelId', this.modelId)
+    }
+  },
+  computed: {
+    modelAdeo () {
+      return this.$store.getters.modelAdeo
     }
   },
   components: {

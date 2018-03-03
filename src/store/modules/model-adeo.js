@@ -1,10 +1,5 @@
 import axios from 'axios'
 
-const axiosInstance = axios.create({
-  baseURL: 'http://humboldt155.pythonanywhere.com/api/',
-  timeout: 10000
-})
-
 // initial state
 const state = {
   modelId: '',
@@ -32,8 +27,18 @@ const actions = {
   setModelId (vuexContext, modelId) {
     vuexContext.commit('setModelId', modelId)
   },
-  setModelAdeo (vuexContext, modelAdeo) {
-    vuexContext.commit('setModelAdeo', modelAdeo)
+  setModelAdeo (vuexContext, modelId) {
+    axios.get('http://humboldt155.pythonanywhere.com/api/models/', {
+      params: {
+        id: 'MOD_'.concat(modelId)
+      }
+    })
+      .then(response => {
+        vuexContext.commit('setModelAdeo', response.data[0])
+      })
+      .catch(e => {
+        this.errors.push(e)
+      })
   }
 }
 
