@@ -13,12 +13,12 @@
 
         </b-input-group>
 
-        <b-container>
+        <b-container fluid>
           <br>
 
           <!-- Информация под строкой поиска: Название модели, подробное инфом ... -->
           <b-row>
-            <b-col cols="8">
+            <b-col cols="6">
               <h4>{{ modelAdeo.russian_name }}</h4>
             </b-col>
             <b-col>
@@ -32,17 +32,18 @@
             <b-col>
               <b-btn
                 v-b-toggle.collapse1
-                v-b-tooltip.hover
-                title="информация о модели"
-                size="sm" variant="outline-info">о модели</b-btn>
+                size="sm" variant="outline-info">
+                  <span class="when-opened">info - </span>
+                  <span class="when-closed">info + </span>
+              </b-btn>
             </b-col>
           </b-row>
 
           <!-- Подробная информация о модели в раскрывающемся списке -->
           <b-collapse id="collapse1" class="mt-2">
             <b-card>
-              <p class="card-text">
                 {{ modelAdeo.id }}<br>
+                <h4>Название</h4>
                 <b-badge variant="info">French </b-badge> {{ modelAdeo.french_name }}<br>
                 <b-badge variant="info">English</b-badge> {{ modelAdeo.english_name }}<br>
                 <b-badge variant="info">Russian</b-badge> {{ modelAdeo.russian_name }}<br>
@@ -56,11 +57,24 @@
                   4 отдел - 43 арт. (без AVS - 12)<br>
                   7 отдел - 17 арт. (без AVS - 4)<br>
                 <br>
-                Ближайшие модели:<br>
-                МОД Такая-то<br>
-                МОД Сякая-то<br>
-              </p>
+
+                <!--Схожие модели из этой же группы-->
+                <h4>Группа моделей</h4>
+                <b-container fluid>
+                  <b-row class="my-1" v-for="closeModel in closeModels" :key="closeModel">
+                    <b-col>
+                      <b-badge variant="info">{{ closeModel.id }}</b-badge>
+                      {{ closeModel.russian_name }}
+                      <b-button size="sm" variant="link" @click="pushModel(closeModel.id)"> перейти </b-button>
+                    </b-col>
+                  </b-row>
+                </b-container>
             </b-card>
+            <b-btn
+                v-b-toggle.collapse1
+                size="sm" variant="outline-info">
+                скрыть
+              </b-btn>
           </b-collapse>
 
         </b-container>
@@ -83,9 +97,6 @@
           <b-tab title="Complementary" :title-link-class="linkClass(3)">
             <jump-model-complementary/>
           </b-tab>
-          <b-tab title="Model info" :title-link-class="linkClass(4)">
-            <jump-model-model-details/>
-          </b-tab>
         </b-tabs>
       </b-card>
     </b-container>
@@ -106,7 +117,7 @@ export default {
   data () {
     return {
       tabIndex: 0,
-      modelId: ''
+      modelId: this.$store.getters.modelId
     }
   },
   methods: {
@@ -121,12 +132,22 @@ export default {
       this.$store.dispatch('setModelId', this.modelId)
       this.$store.dispatch('setModelAdeo', this.modelId)
       const mg = this.$store.getters.modelGroup
-      this.$store.dispatch('setCloseModels', mg.toString())
+      this.$store.dispatch('setModelGroupId', mg.toString())
+    },
+    pushModel: function (id) {
+      this.modelId = id.slice(4)
+      this.onLoadModel()
     }
   },
   computed: {
     modelAdeo () {
       return this.$store.getters.modelAdeo
+    },
+    closeModels () {
+      return this.$store.getters.closeModels
+    },
+    setAllModels () {
+      this.$store.dispatch('setAllModels')
     }
   },
   components: {
@@ -135,10 +156,16 @@ export default {
     'jump-model-complementary': ComplementaryComponent,
     'jump-model-model-details': ModelDetailsComponent,
     'jump-model-table': TableComponent
+  },
+  mounted () {
+    this.$store.dispatch('setAllModels')
   }
 }
 </script>
 
 <style>
-
+  .collapsed > .when-opened,
+  :not(.collapsed) > .when-closed {
+    display: none;
+  }
 </style>

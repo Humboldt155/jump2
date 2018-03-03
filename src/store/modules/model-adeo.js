@@ -5,7 +5,8 @@ const state = {
   modelId: '',
   modelAdeo: {},
   modelGroupId: '',
-  allModels: []
+  allModels: [],
+  closeModels: []
 }
 
 // mutations
@@ -21,6 +22,9 @@ const mutations = {
   },
   setModelGroupId (state, modelGroupId) {
     state.modelGroupId = modelGroupId
+  },
+  setCloseModels (state, closeModels) {
+    state.closeModels = closeModels
   }
 }
 
@@ -29,7 +33,8 @@ const getters = {
   modelId: state => state.modelId,
   modelAdeo: state => state.modelAdeo,
   allModels: state => state.allModels,
-  modelGroupId: state => state.modelGroupId
+  modelGroupId: state => state.modelGroupId,
+  closeModels: state => state.closeModels
 }
 
 // actions
@@ -45,7 +50,12 @@ const actions = {
     })
       .then(response => {
         vuexContext.commit('setModelAdeo', response.data[0])
-        vuexContext.commit('setModelGroupId', response.data[0].model_group_adeo)
+        const mg = response.data[0].model_group_adeo
+        vuexContext.commit('setModelGroupId', mg)
+        let closeModels = vuexContext.state.allModels.filter(function (model) {
+          return model.model_group_adeo === mg
+        })
+        vuexContext.commit('setCloseModels', closeModels)
       })
       .catch(e => {
         this.errors.push(e)
@@ -59,6 +69,9 @@ const actions = {
       .catch(e => {
         this.errors.push(e)
       })
+  },
+  setModelGroupId (vuexContext, closeModels) {
+    vuexContext.commit('setCloseModels', closeModels)
   }
 }
 

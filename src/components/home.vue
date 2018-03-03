@@ -16,9 +16,6 @@
 <script>
 export default {
   name: 'home',
-  created() {
-    this.$store.dispatch('setAllModels')
-  },
   mounted() {
     this.$store.dispatch('setAllModels')
   },
