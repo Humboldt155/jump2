@@ -43,9 +43,9 @@
             <b-card>
               <p class="card-text">
                 {{ modelAdeo.id }}<br>
-                <b-badge variant="info">French: </b-badge> {{ modelAdeo.french_name }}<br>
-                <b-badge variant="info">English:</b-badge> {{ modelAdeo.english_name }}<br>
-                <b-badge variant="info">Russian:</b-badge> {{ modelAdeo.russian_name }}<br>
+                <b-badge variant="info">French </b-badge> {{ modelAdeo.french_name }}<br>
+                <b-badge variant="info">English</b-badge> {{ modelAdeo.english_name }}<br>
+                <b-badge variant="info">Russian</b-badge> {{ modelAdeo.russian_name }}<br>
                 <br>
                 Артикулов: 237<br>
                  - из них AVS: 125<br>
@@ -94,7 +94,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 
 import AnalogsComponent from './model/analogs'
 import AttributesComponent from './model/attributes'
@@ -119,8 +118,10 @@ export default {
       }
     },
     onLoadModel: function () {
-      this.$store.dispatch('setModelAdeo', this.modelId)
       this.$store.dispatch('setModelId', this.modelId)
+      this.$store.dispatch('setModelAdeo', this.modelId)
+      const mg = this.$store.getters.modelGroup
+      this.$store.dispatch('setCloseModels', mg.toString())
     }
   },
   computed: {

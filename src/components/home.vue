@@ -7,7 +7,7 @@
     </b-row>
     <b-row class="text-center">
         <b-col></b-col>
-        <b-col cols="5"></b-col>
+        <b-col cols="4"></b-col>
         <b-col></b-col>
     </b-row>
   </b-container>
@@ -15,7 +15,16 @@
 
 <script>
 export default {
-  name: 'home'
+  name: 'home',
+  created() {
+    this.$store.dispatch('setAllModels')
+  },
+  mounted() {
+    this.$store.dispatch('setAllModels')
+  },
+  computed() {
+    this.$store.dispatch('setAllModels')
+  }
 }
 </script>
 
