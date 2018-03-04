@@ -131,7 +131,8 @@ const state = {
   modelOpus: {},
   products: [],
   columns: [],
-  fields: []
+  fields: [],
+  productsTest: []
 }
 
 // mutations
@@ -147,6 +148,9 @@ const mutations = {
   },
   setFields (state, fields) {
     state.fields = fields
+  },
+  setProductsTest (state, productsTest) {
+    state.productsTest = productsTest
   }
 }
 
@@ -155,7 +159,8 @@ const getters = {
   modelOpus: state => state.modelOpus,
   products: state => state.products,
   columns: state => state.columns,
-  fields: state => state.fields
+  fields: state => state.fields,
+  productsTest: state => state.productsTest
 }
 
 // actions
@@ -175,8 +180,8 @@ const actions = {
       })
   },
   setProducts (vuexContext, modelId) {
-    axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize=100&startFrom=1&filter=modelCode%3A'
-      .concat(modelId, '&mode=mask&mask=Characteristics&expand=attributes&context=lang%3Aru'), {
+    axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize=10&startFrom=1&filter=modelCode%3A'
+      .concat(modelId, '&expand=attributes&context=lang%3Aru'), {
       headers: {
         'Authorization': 'Basic d2lrZW86b2VraXc',
         'X-Opus-Publish-Status': 'published'
@@ -184,6 +189,7 @@ const actions = {
     })
       .then(response => {
         const resp = response.data.content
+        vuexContext.commit('setProductsTest', resp)
         // Финальный лист всех продуктов в формате {key: value}
         let productsNew = []
 
@@ -196,7 +202,7 @@ const actions = {
           let product = {}
 
           // Лист всех атрибутов выбранного продукта
-          let attributes = resp[i].chapter[0].attribute
+          let attributes = resp[i].attribute
 
           for (let j = 0; j < attributes.length; j++) {
             let attName = attributes[j].displayName
