@@ -134,7 +134,7 @@ const state = {
   products: [],
   columns: [],
   fields: [],
-  productsTest: [],
+  productsTest: 0,
   attributes: [],
   productsQty: {},
   isLoaded: false
@@ -226,8 +226,8 @@ const actions = {
       })
         .then(response => {
           const resp = response.data.content
+          vuexContext.commit('productsTest', response.data['totalCount'])
           // Временный сет, в котором будем хранить все возможные значения атрибутов
-          let att = new Set()
 
           // Проходим циклом через все продукты, которые получили из БД Опуса
           for (let i = 0; i < resp.length; i++) {
