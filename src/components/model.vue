@@ -5,7 +5,7 @@
 
         <b-input-group size="md" prepend="MOD_">
 
-          <b-form-input v-model.lazy="modelId" placeholder="введите номер или название модели, например 200767 или Дрели аккумуляторные"></b-form-input>
+          <b-form-input v-model.lazy="modelId" placeholder="введите номер модели, например 200767, и нажмите ПРИМЕНИТЬ"></b-form-input>
 
           <b-input-group-append>
             <b-btn variant="secondary" @click="onLoadModel">применить</b-btn>
