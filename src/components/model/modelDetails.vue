@@ -15,7 +15,7 @@
         <b-badge variant="warning">без описаний        </b-badge>&nbsp;&nbsp;{{ productsQty.total - productsQty.description }}<br>
         <br>
         <!--Схожие модели из этой же группы-->
-        <h5>Ближайшие модели</h5>
+        <h5>Близайшие модели</h5>
         <b-container fluid>
           <b-row class="my-1" v-for="closeModel in closeModels" :key="closeModel">
             <b-col cols="6">
@@ -32,6 +32,30 @@
             </b-col>
           </b-row>
         </b-container>
+        <br>
+        <h5>Другие близкие модели</h5>
+          <b-btn v-b-toggle.collapse1 variant="outline-info">
+            <span class="when-opened">скрыть</span>
+            <span class="when-closed">показать</span>
+          </b-btn>
+          <b-collapse id="collapse1">
+            <b-container fluid>
+              <b-row class="my-1" v-for="nearModel in nearModels" :key="nearModel">
+                <b-col cols="6">
+                  <b-button size="sm" variant="outline-info" @click="pushModel(nearModel.id)"> {{ nearModel.id }} </b-button>
+                  {{ nearModel.russian_name }}
+                </b-col>
+                <b-col>
+                  <b-badge variant="secondary">fr: </b-badge>
+                  {{ nearModel.french_name }}
+                </b-col>
+                <b-col>
+                  <b-badge variant="secondary">en: </b-badge>
+                  {{ nearModel.english_name }}
+                </b-col>
+              </b-row>
+            </b-container>
+          </b-collapse>
 
   </b-container>
 </template>
@@ -59,6 +83,9 @@ export default {
     },
     closeModels () {
       return this.$store.getters.closeModels
+    },
+    nearModels () {
+      return this.$store.getters.nearModels
     },
     productsQty () {
       return this.$store.getters.productsQty

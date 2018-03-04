@@ -196,7 +196,7 @@ const actions = {
   },
   setProducts (vuexContext, modelId) {
     vuexContext.commit('setIsLoaded', true)
-    axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize=100&startFrom=1&filter=modelCode%3A'
+    axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize=500&startFrom=1&filter=modelCode%3A'
       .concat(modelId, '&expand=attributes&context=lang%3Aru'), {
       headers: {
         'Authorization': 'Basic d2lrZW86b2VraXc',

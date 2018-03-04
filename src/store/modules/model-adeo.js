@@ -6,7 +6,8 @@ const state = {
   modelAdeo: {},
   modelGroupId: '',
   allModels: [],
-  closeModels: []
+  closeModels: [],
+  nearModels: []
 }
 
 // mutations
@@ -25,6 +26,9 @@ const mutations = {
   },
   setCloseModels (state, closeModels) {
     state.closeModels = closeModels
+  },
+  setNearModels (state, nearModels) {
+    state.nearModels = nearModels
   }
 }
 
@@ -34,7 +38,8 @@ const getters = {
   modelAdeo: state => state.modelAdeo,
   allModels: state => state.allModels,
   modelGroupId: state => state.modelGroupId,
-  closeModels: state => state.closeModels
+  closeModels: state => state.closeModels,
+  nearModels: state => state.nearModels,
 }
 
 // actions
@@ -55,7 +60,11 @@ const actions = {
         let closeModels = vuexContext.state.allModels.filter(function (model) {
           return model.model_group_adeo === mg
         })
+        let nearModels = vuexContext.state.allModels.filter(function (model) {
+          return model.model_group_adeo.slice(0, 10) === mg.slice(0, 10)
+        })
         vuexContext.commit('setCloseModels', closeModels)
+        vuexContext.commit('setNearModels', nearModels)
       })
       .catch(e => {
         this.errors.push(e)
