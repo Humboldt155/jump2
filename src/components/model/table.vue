@@ -1,5 +1,12 @@
 <template>
   <b-container fluid>
+    <download-excel
+      class   = "btn btn-default"
+      :data   = "products"
+      :fields = "columns"
+      name    = "filename.xls">
+    </download-excel>
+
     <b-table
       bordered
       responsive
@@ -38,6 +45,9 @@ export default {
     },
     fields () {
       return this.$store.getters.fields
+    },
+    columns () {
+      return this.$store.getters.columns
     }
   }
 }

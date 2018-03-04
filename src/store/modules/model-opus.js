@@ -132,7 +132,9 @@ const state = {
   products: [],
   columns: [],
   fields: [],
-  productsTest: []
+  productsTest: [],
+  attributes: [],
+  productsQty: {}
 }
 
 // mutations
@@ -151,6 +153,12 @@ const mutations = {
   },
   setProductsTest (state, productsTest) {
     state.productsTest = productsTest
+  },
+  setAttributes (state, attributes) {
+    state.attributes = attributes
+  },
+  setProductsQty (state, productsQty) {
+    state.productsQty = productsQty
   }
 }
 
@@ -160,7 +168,9 @@ const getters = {
   products: state => state.products,
   columns: state => state.columns,
   fields: state => state.fields,
-  productsTest: state => state.productsTest
+  productsTest: state => state.productsTest,
+  attributes: state => state.attributes,
+  productsQty: state => state.productsQty
 }
 
 // actions
@@ -189,7 +199,6 @@ const actions = {
     })
       .then(response => {
         const resp = response.data.content
-        vuexContext.commit('setProductsTest', resp)
         // Финальный лист всех продуктов в формате {key: value}
         let productsNew = []
 
@@ -230,9 +239,11 @@ const actions = {
           }
           productsNew.push(product)
         }
-
+        let pQ = {total: 0, avs: 0, noDescription: 0, noDescriptionAvs: 0}
         // Вставляем пустые значения по тем артикулам, которые не заполнены
         for (let i = 0; i < productsNew.length; i++) {
+          // Заполняем данные по количествам
+          pQ['total'] += 1
           let product = productsNew[i]
           for (let key of att) {
             if (!(key in product)) {
@@ -244,7 +255,13 @@ const actions = {
             }
           }
         }
-        let columns = ['Код продукта', 'Название на сайте', 'Отдел', 'Дата AVS', 'Описание']
+        let columns = {
+          'Код продукта': 'Код продукта',
+          'Название на сайте': 'Название на сайте',
+          'Отдел': 'Отдел',
+          'Дата AVS': 'Дата AVS',
+          'Описание': 'Описание'
+        }
         let fields = [
           {
             key: 'Код продукта',
@@ -270,7 +287,7 @@ const actions = {
         ]
         for (let key of att) {
           if (!(firstCols.includes(key))) {
-            columns.push(key)
+            columns[key] = key
             fields.push({
               key: key,
               label: key.concat(' __________________________________'),
@@ -282,6 +299,7 @@ const actions = {
         vuexContext.commit('setColumns', columns)
         vuexContext.commit('setFields', fields)
         vuexContext.commit('setProducts', productsNew)
+        vuexContext.commit('setProductsQty', pQ)
       })
       .catch(e => {
         this.errors.push(e)

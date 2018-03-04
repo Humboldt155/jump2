@@ -25,7 +25,7 @@
               <b-button variant="info" size="sm">
                 артикулов:
                 <b-badge variant="light">
-                  0
+                  {{ productsQty.total }}
                 </b-badge>
               </b-button>
             </b-col>
@@ -33,49 +33,13 @@
               <b-btn
                 v-b-toggle.collapse1
                 size="sm" variant="outline-info">
-                  <span class="when-opened">info - </span>
-                  <span class="when-closed">info + </span>
+                  <span class="when-opened">информация о модели - </span>
+                  <span class="when-closed">iподробнее о модели + </span>
               </b-btn>
             </b-col>
           </b-row>
 
           <!-- Подробная информация о модели в раскрывающемся списке -->
-          <b-collapse id="collapse1" class="mt-2">
-            <b-card>
-                {{ modelAdeo.id }}<br>
-                <h4>Название</h4>
-                <b-badge variant="info">French </b-badge> {{ modelAdeo.french_name }}<br>
-                <b-badge variant="info">English</b-badge> {{ modelAdeo.english_name }}<br>
-                <b-badge variant="info">Russian</b-badge> {{ modelAdeo.russian_name }}<br>
-                <br>
-                Артикулов: 237<br>
-                 - из них AVS: 125<br>
-                 - без описаний: 45<br>
-                 - без AVS и описаний: 12<br>
-                <br>
-                Артикулов по отделам:<br>
-                  4 отдел - 43 арт. (без AVS - 12)<br>
-                  7 отдел - 17 арт. (без AVS - 4)<br>
-                <br>
-
-                <!--Схожие модели из этой же группы-->
-                <h4>Группа моделей</h4>
-                <b-container fluid>
-                  <b-row class="my-1" v-for="closeModel in closeModels" :key="closeModel">
-                    <b-col>
-                      <b-badge variant="info">{{ closeModel.id }}</b-badge>
-                      {{ closeModel.russian_name }}
-                      <b-button size="sm" variant="link" @click="pushModel(closeModel.id)"> перейти </b-button>
-                    </b-col>
-                  </b-row>
-                </b-container>
-            </b-card>
-            <b-btn
-                v-b-toggle.collapse1
-                size="sm" variant="outline-info">
-                скрыть
-              </b-btn>
-          </b-collapse>
 
         </b-container>
       </b-card>
@@ -96,6 +60,9 @@
           </b-tab>
           <b-tab title="Complementary" :title-link-class="linkClass(3)">
             <jump-model-complementary/>
+          </b-tab>
+          <b-tab title="Model Info" :title-link-class="linkClass(4)">
+            <jump-model-model-details/>
           </b-tab>
         </b-tabs>
       </b-card>
@@ -147,6 +114,9 @@ export default {
     },
     closeModels () {
       return this.$store.getters.closeModels
+    },
+    productsQty () {
+      return this.$store.getters.productsQty
     },
     setAllModels () {
       this.$store.dispatch('setAllModels')
