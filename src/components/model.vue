@@ -84,7 +84,7 @@
     <!-- переключаемые вкладки (Таблица, Аналоги ...) -->
     <b-container fluid>
       <b-card no-body>
-        <b-tabs pills card vertical v-model="tabIndex">
+        <b-tabs pills card v-model="tabIndex">
           <b-tab title="Table" active :title-link-class="linkClass(0)">
             <jump-model-table/>
           </b-tab>
