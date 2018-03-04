@@ -18,8 +18,11 @@
 
           <!-- Информация под строкой поиска: Название модели, подробное инфом ... -->
           <b-row>
+            <b-col>
+              {{ modelAdeo.id }}
+            </b-col>
             <b-col cols="6">
-              <h4>{{ modelAdeo.russian_name }}</h4>
+              <h5>{{ modelAdeo.russian_name }}</h5>
             </b-col>
             <b-col>
               <b-button variant="info" size="sm">
@@ -30,12 +33,12 @@
               </b-button>
             </b-col>
             <b-col>
-              <b-btn
-                v-b-toggle.collapse1
-                size="sm" variant="outline-info">
-                  <span class="when-opened">информация о модели - </span>
-                  <span class="when-closed">iподробнее о модели + </span>
-              </b-btn>
+              <b-button variant="info" size="sm">
+                без avs:
+                <b-badge variant="light">
+                  {{ productsQty.avs }}
+                </b-badge>
+              </b-button>
             </b-col>
           </b-row>
 

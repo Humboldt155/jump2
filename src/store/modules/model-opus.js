@@ -239,16 +239,21 @@ const actions = {
           }
           productsNew.push(product)
         }
-        let pQ = {total: 0, avs: 0, noDescription: 0, noDescriptionAvs: 0}
+        let pQ = {total: 0, avs: 0, description: 0, noDescriptionAvs: 0}
         // Вставляем пустые значения по тем артикулам, которые не заполнены
         for (let i = 0; i < productsNew.length; i++) {
           // Заполняем данные по количествам
-          pQ['total'] += 1
+          pQ['total'] += 1 // + Товар Всего
           let product = productsNew[i]
           for (let key of att) {
+            if ((key in product)) {
+              if (key === 'Описание') { pQ['description'] += 1 }
+            }
             if (!(key in product)) {
               if (key === 'Описание') {
                 productsNew[i][key] = 'Нет описания'
+              } else if (key === 'Дата AVS') {
+                pQ['avs'] += 1 // + Товар без avs
               } else {
                 productsNew[i][key] = ''
               }

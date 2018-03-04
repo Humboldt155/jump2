@@ -7,10 +7,12 @@
         <b-badge variant="info">English</b-badge> {{ modelAdeo.english_name }}<br>
         <b-badge variant="info">Russian</b-badge> {{ modelAdeo.russian_name }}<br>
                 <br>
-        Артикулов всего:        <b-badge variant="info">{{ productsQty.total }}</b-badge><br>
-        - из них AVS:           <b-badge variant="info">{{ productsQty.avs }}</b-badge><br><br>
-        Артикулов без описаний: <b-badge variant="info">{{ productsQty.noDescription }}</b-badge><br>
-        - без AVS и описаний:   <b-badge variant="info">{{ productsQty.noDescriptionAvs }}</b-badge><br>
+        <h5>Артикулов:</h5>
+        <b-badge variant="light">ВСЕГО             </b-badge>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ productsQty.total }}<br>
+        <b-badge variant="light">c AVS:              </b-badge>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ productsQty.total - productsQty.avs }}<br>
+        <b-badge variant="success">без AVS:            </b-badge>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ productsQty.avs }}<br>
+        <b-badge variant="success">c описаниями        </b-badge>&nbsp;{{ productsQty.description }}<br>
+        <b-badge variant="warning">без описаний        </b-badge>&nbsp;&nbsp;{{ productsQty.total - productsQty.description }}<br>
         <br>
         Артикулов по отделам:<br>
         _ отдел - _ арт. (без AVS - _ )<br>
