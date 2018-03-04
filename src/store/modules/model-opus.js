@@ -134,7 +134,8 @@ const state = {
   fields: [],
   productsTest: [],
   attributes: [],
-  productsQty: {}
+  productsQty: {},
+  isLoaded: false
 }
 
 // mutations
@@ -159,6 +160,9 @@ const mutations = {
   },
   setProductsQty (state, productsQty) {
     state.productsQty = productsQty
+  },
+  setIsLoaded (state, bool) {
+    state.isLoaded = bool
   }
 }
 
@@ -170,7 +174,8 @@ const getters = {
   fields: state => state.fields,
   productsTest: state => state.productsTest,
   attributes: state => state.attributes,
-  productsQty: state => state.productsQty
+  productsQty: state => state.productsQty,
+  isLoaded: state => state.isLoaded
 }
 
 // actions
@@ -190,7 +195,8 @@ const actions = {
       })
   },
   setProducts (vuexContext, modelId) {
-    axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize=10&startFrom=1&filter=modelCode%3A'
+    vuexContext.commit('setIsLoaded', true)
+    axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize=100&startFrom=1&filter=modelCode%3A'
       .concat(modelId, '&expand=attributes&context=lang%3Aru'), {
       headers: {
         'Authorization': 'Basic d2lrZW86b2VraXc',
@@ -305,6 +311,7 @@ const actions = {
         vuexContext.commit('setFields', fields)
         vuexContext.commit('setProducts', productsNew)
         vuexContext.commit('setProductsQty', pQ)
+        vuexContext.commit('setIsLoaded', false)
       })
       .catch(e => {
         this.errors.push(e)

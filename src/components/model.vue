@@ -45,12 +45,12 @@
           <!-- Подробная информация о модели в раскрывающемся списке -->
 
         </b-container>
+        <b-alert variant="warning" :show="isLoaded">Ждите, идет загрузка</b-alert>
       </b-card>
     </b-container>
 
     <!-- переключаемые вкладки (Таблица, Аналоги ...) -->
     <b-container fluid>
-      <b-card no-body>
         <b-tabs pills card v-model="tabIndex">
           <b-tab title="Table" active :title-link-class="linkClass(0)">
             <jump-model-table/>
@@ -68,7 +68,6 @@
             <jump-model-model-details/>
           </b-tab>
         </b-tabs>
-      </b-card>
     </b-container>
 
   </b-container>
@@ -114,6 +113,9 @@ export default {
   computed: {
     modelAdeo () {
       return this.$store.getters.modelAdeo
+    },
+    isLoaded () {
+      return this.$store.getters.isLoaded
     },
     closeModels () {
       return this.$store.getters.closeModels
