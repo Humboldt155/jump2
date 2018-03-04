@@ -4,7 +4,10 @@
       class   = "btn btn-default"
       :data   = "products"
       :fields = "columns"
-      name    = "filename.xls">
+      :name    = "file_name">
+      <b-button size="sm" class="mr-2" variant="success">
+        Download EXCEL
+      </b-button>
     </download-excel>
 
     <b-table
@@ -48,6 +51,10 @@ export default {
     },
     columns () {
       return this.$store.getters.columns
+    },
+    file_name () {
+      let model = this.$store.getters.modelAdeo
+      return model.russian_name.concat('.xls')
     }
   }
 }
