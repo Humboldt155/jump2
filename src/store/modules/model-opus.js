@@ -124,7 +124,7 @@ import axios from 'axios'
 
 const firstCols = ['Код продукта', 'ATT_12963 - Название на сайте', 'Отдел', 'Дата AVS', 'ATT_01022 - Описание']
 
-const att_code_slice = '/foundation/v2/attributes/'.length
+const attCodeSlice = '/foundation/v2/attributes/'.length
 
 const reqQty = 50
 
@@ -134,7 +134,7 @@ const state = {
   products: [],
   columns: [],
   fields: [],
-  productsTest: 0,
+  productsTest: '',
   attributes: [],
   productsQty: {},
   isLoaded: false
@@ -145,62 +145,11 @@ const mutations = {
   setModelOpus (state, modelOpus) {
     state.modelOpus = modelOpus
   },
-  setProducts (state, products) {
-    state.products = products
-  },
-  setColumns (state, columns) {
-    state.columns = columns
-  },
-  setFields (state, fields) {
-    state.fields = fields
-  },
-  setProductsTest (state, productsTest) {
-    state.productsTest = productsTest
-  },
-  setAttributes (state, attributes) {
-    state.attributes = attributes
-  },
-  setProductsQty (state, productsQty) {
-    state.productsQty = productsQty
-  },
-  setIsLoaded (state, bool) {
-    state.isLoaded = bool
-  }
-}
-
-// getters
-const getters = {
-  modelOpus: state => state.modelOpus,
-  products: state => state.products,
-  columns: state => state.columns,
-  fields: state => state.fields,
-  productsTest: state => state.productsTest,
-  attributes: state => state.attributes,
-  productsQty: state => state.productsQty,
-  isLoaded: state => state.isLoaded
-}
-
-// actions
-const actions = {
-  setModelOpus (vuexContext, modelId) {
-    axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/foundation/v2/modelTypes/Product/models/'.concat(modelId), {
-      headers: {
-        'Authorization': 'Basic d2lrZW86b2VraXc',
-        'X-Opus-Publish-Status': 'published'
-      }
-    })
-      .then(response => {
-        vuexContext.commit('setModelOpus', response.data)
-      })
-      .catch(e => {
-        this.errors.push(e)
-      })
-  },
-  setProducts (vuexContext, modelId) {
+  setProducts (state, modelId) {
     let productsNew = []
     let columns = {
       'Код продукта': 'Код продукта',
-      'Название на сайте': 'Название на сайте',
+      'ATT_12963 - Название на сайте': 'ATT_12963 - Название на сайте',
       'Отдел': 'Отдел',
       'Дата AVS': 'Дата AVS',
       'ATT_01022 - Описание': 'ATT_01022 - Описание'
@@ -214,9 +163,8 @@ const actions = {
     ]
     let pQ = {total: 0, avs: 0, description: 0, noDescriptionAvs: 0}
     let att = new Set() // Набор всех возможных аттрибутов
-    vuexContext.commit('setIsLoaded', true)
 
-    for (let req = 0; req < 20; req++) {
+    for (let req = 0; req < 300; req++) {
       axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize='
         .concat(reqQty, '&startFrom=', 1 + req * reqQty, '&filter=modelCode%3A', modelId, '&expand=attributes&context=lang%3Aru'), {
         headers: {
@@ -226,7 +174,6 @@ const actions = {
       })
         .then(response => {
           const resp = response.data.content
-          vuexContext.commit('productsTest', response.data['totalCount'])
           // Временный сет, в котором будем хранить все возможные значения атрибутов
 
           // Проходим циклом через все продукты, которые получили из БД Опуса
@@ -242,8 +189,8 @@ const actions = {
 
             // Лист всех атрибутов выбранного продукта
             let attributes = resp[i].attribute.filter(function (attribute) {
-              let code = attribute.href.slice(att_code_slice).split('@')[0]
-              let check = (code.length === 5 || code === 'productID' || code === '3' || code === '6')
+              let code = attribute.href.slice(attCodeSlice).split('@')[0]
+              let check = (code.length === 5 || code === 'productID' || code === '3' || code === '6') && (code !== 'isMDD') && (code !== 'isNew')
               return check
             })
 
@@ -251,7 +198,7 @@ const actions = {
               let attName = attributes[j].displayName
 
               // Вырезаем код атрибута из параметра href
-              let attCode = 'ATT_'.concat(attributes[j].href.slice(att_code_slice)).split('@')[0]
+              let attCode = 'ATT_'.concat(attributes[j].href.slice(attCodeSlice)).split('@')[0]
               let attConcat = attCode.concat(' - ', attName)
 
               if (attCode === 'ATT_productID') {
@@ -309,12 +256,60 @@ const actions = {
     }
 
     // Вставляем пустые значения по тем артикулам, которые не заполнены
-    vuexContext.commit('setColumns', columns)
-    vuexContext.commit('setFields', fields)
-    vuexContext.commit('setProducts', productsNew)
-    vuexContext.commit('setProductsQty', pQ)
-    vuexContext.commit('setIsLoaded', false)
+    state.columns = columns
+    state.fields = fields
+    state.products = productsNew
+    state.productsQty = pQ
+  },
+  setColumns (state, columns) {
+    state.columns = columns
+  },
+  setFields (state, fields) {
+    state.fields = fields
+  },
+  setProductsTest (state, productsTest) {
+    state.productsTest = productsTest
+  },
+  setAttributes (state, attributes) {
+    state.attributes = attributes
+  },
+  setProductsQty (state, productsQty) {
+    state.productsQty = productsQty
+  },
+  setIsLoaded (state, bool) {
+    state.isLoaded = bool
   }
+}
+
+// getters
+const getters = {
+  modelOpus: state => state.modelOpus,
+  products: state => state.products,
+  columns: state => state.columns,
+  fields: state => state.fields,
+  productsTest: state => state.productsTest,
+  attributes: state => state.attributes,
+  productsQty: state => state.productsQty,
+  isLoaded: state => state.isLoaded
+}
+
+// actions
+const actions = {
+  setModelOpus (vuexContext, modelId) {
+    axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/foundation/v2/modelTypes/Product/models/'.concat(modelId), {
+      headers: {
+        'Authorization': 'Basic d2lrZW86b2VraXc',
+        'X-Opus-Publish-Status': 'published'
+      }
+    })
+      .then(response => {
+        vuexContext.commit('setModelOpus', response.data)
+      })
+      .catch(e => {
+        this.errors.push(e)
+      })
+  },
+  setProducts (vuexContext, modelId) {}
 }
 
 export default {
