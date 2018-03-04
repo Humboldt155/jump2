@@ -45,7 +45,7 @@
           <!-- Подробная информация о модели в раскрывающемся списке -->
 
         </b-container>
-        <b-alert variant="warning" :show="isLoaded">Ждите, идет загрузка</b-alert>
+        <b-alert variant="warning" :show="isLoaded">Ждите, идет загрузка...</b-alert>
       </b-card>
     </b-container>
 

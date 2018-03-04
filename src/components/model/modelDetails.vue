@@ -15,7 +15,7 @@
         <b-badge variant="warning">без описаний        </b-badge>&nbsp;&nbsp;{{ productsQty.total - productsQty.description }}<br>
         <br>
         <!--Схожие модели из этой же группы-->
-        <h5>Близайшие модели</h5>
+        <h5>Ближайшие модели (3 уровень Адео)</h5>
         <b-container fluid>
           <b-row class="my-1" v-for="closeModel in closeModels" :key="closeModel">
             <b-col cols="6">
@@ -33,7 +33,7 @@
           </b-row>
         </b-container>
         <br>
-        <h5>Другие близкие модели</h5>
+        <h5>Ближайшие модели (2 уровень Адео)</h5>
           <b-btn v-b-toggle.collapse1 variant="outline-info">
             <span class="when-opened">скрыть</span>
             <span class="when-closed">показать</span>
