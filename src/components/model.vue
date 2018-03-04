@@ -130,6 +130,8 @@ export default {
     },
     onLoadModel: function () {
       this.$store.dispatch('setModelId', this.modelId)
+      this.$store.dispatch('setProducts', this.modelId)
+      this.$store.dispatch('setModelOpus', this.modelId)
       this.$store.dispatch('setModelAdeo', this.modelId)
       const mg = this.$store.getters.modelGroup
       this.$store.dispatch('setModelGroupId', mg.toString())
