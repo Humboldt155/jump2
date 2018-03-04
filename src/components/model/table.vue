@@ -15,7 +15,7 @@
       :items="products"
       :fields="fields"
     >
-      <template slot="Описание" slot-scope="row">
+      <template slot="ATT_01022 - Описание" slot-scope="row">
         <b-button size="sm" @click.stop="row.toggleDetails" class="mr-2" variant="outline-secondary">
           описание {{ row.detailsShowing ? '-' : '+'}}
         </b-button>

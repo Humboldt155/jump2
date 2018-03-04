@@ -122,9 +122,11 @@ import axios from 'axios'
 //   'Store stock recommendation'
 // ]
 
-const firstCols = ['Код продукта', 'Название на сайте', 'Отдел', 'Дата AVS', 'Описание']
+const firstCols = ['Код продукта', 'ATT_12963 - Название на сайте', 'Отдел', 'Дата AVS', 'ATT_01022 - Описание']
 
 const att_code_slice = '/foundation/v2/attributes/'.length
+
+const reqQty = 50
 
 // initial state
 const state = {
@@ -195,126 +197,123 @@ const actions = {
       })
   },
   setProducts (vuexContext, modelId) {
+    let productsNew = []
+    let columns = {
+      'Код продукта': 'Код продукта',
+      'Название на сайте': 'Название на сайте',
+      'Отдел': 'Отдел',
+      'Дата AVS': 'Дата AVS',
+      'ATT_01022 - Описание': 'ATT_01022 - Описание'
+    }
+    let fields = [
+      {key: 'Код продукта', label: 'Код продукта', sortable: true},
+      {key: 'ATT_12963 - Название на сайте', label: 'Название на сайте ________________________________________________', sortable: true},
+      {key: 'Отдел', label: 'Отдел', sortable: true},
+      {key: 'Дата AVS', label: 'Дата AVS', sortable: true},
+      'ATT_01022 - Описание'
+    ]
+    let pQ = {total: 0, avs: 0, description: 0, noDescriptionAvs: 0}
+    let att = new Set() // Набор всех возможных аттрибутов
     vuexContext.commit('setIsLoaded', true)
-    axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize=100&startFrom=1&filter=modelCode%3A'
-      .concat(modelId, '&expand=attributes&context=lang%3Aru'), {
-      headers: {
-        'Authorization': 'Basic d2lrZW86b2VraXc',
-        'X-Opus-Publish-Status': 'published'
-      }
-    })
-      .then(response => {
-        const resp = response.data.content
-        // Финальный лист всех продуктов в формате {key: value}
 
-        vuexContext.commit('setProductsTest', resp)
-        let productsNew = []
-
-        // Временный сет, в котором будем хранить все возможные значения атрибутов
-        let att = new Set()
-
-        // Проходим циклом через все продукты, которые получили из БД Опуса
-        for (let i = 0; i < resp.length; i++) {
-          // Создаем объект, в котором будем хранить аттрибуты и значения выбранного продукта
-          let product = {}
-
-          // Лист всех атрибутов выбранного продукта
-          let attributes = resp[i].attribute.filter(function (attribute) {
-            let check = (attribute.href.slice(att_code_slice).split('@')[0].length === 5)
-            return check
-          })
-
-          for (let j = 0; j < attributes.length; j++) {
-            let attName = attributes[j].displayName
-            console.log(attributes[j].displayName)
-            // Пропускаем все атрибуты, находящиеся в списке 'excludeAtt'
-            // if (excludeAtt.includes(attName)) { continue }
-
-            // Вырезаем код атрибута из параметра href
-            let attCode = 'ATT_'.concat(attributes[j].href.slice(att_code_slice)).split('@')[0]
-            let attConcat = attCode.concat(' - ', attName)
-
-            if (attCode === 'ATT_productID') { attConcat = 'Код продукта' }
-            if (attCode === 'ATT_12963') { attConcat = 'ATT_12963 - Название на сайте' }
-            if (attCode === 'ATT_01022') { attConcat = 'ATT_01022 - Описание' }
-
-            let attValue = attributes[j].value[0]
-            product[attConcat] = attValue
-            att.add(attConcat)
-          }
-          productsNew.push(product)
+    for (let req = 0; req < 20; req++) {
+      axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize='
+        .concat(reqQty, '&startFrom=', 1 + req * reqQty, '&filter=modelCode%3A', modelId, '&expand=attributes&context=lang%3Aru'), {
+        headers: {
+          'Authorization': 'Basic d2lrZW86b2VraXc',
+          'X-Opus-Publish-Status': 'published'
         }
-        let pQ = {total: 0, avs: 0, description: 0, noDescriptionAvs: 0}
-        // Вставляем пустые значения по тем артикулам, которые не заполнены
-        for (let i = 0; i < productsNew.length; i++) {
-          // Заполняем данные по количествам
-          pQ['total'] += 1 // + Товар Всего
-          let product = productsNew[i]
-          for (let key of att) {
-            if ((key in product)) {
-              if (key === 'ATT_01022 - Описание') { pQ['description'] += 1 }
+      })
+        .then(response => {
+          const resp = response.data.content
+          // Временный сет, в котором будем хранить все возможные значения атрибутов
+          let att = new Set()
+
+          // Проходим циклом через все продукты, которые получили из БД Опуса
+          for (let i = 0; i < resp.length; i++) {
+            // Создаем объект, в котором будем хранить аттрибуты и значения выбранного продукта
+            let product = {}
+
+            if (resp.length === 0) {
+              break
+            } else {
+              pQ['total'] += 1 // + Товар Всего
             }
-            if (!(key in product)) {
-              if (key === 'ATT_01022 - Описание') {
-                productsNew[i][key] = 'Нет описания'
-              } else if (key === 'Дата AVS') {
-                pQ['avs'] += 1 // + Товар без avs
-              } else {
-                productsNew[i][key] = ''
+
+            // Лист всех атрибутов выбранного продукта
+            let attributes = resp[i].attribute.filter(function (attribute) {
+              let code = attribute.href.slice(att_code_slice).split('@')[0]
+              let check = (code.length === 5 || code === 'productID' || code === '3' || code === '6')
+              return check
+            })
+
+            for (let j = 0; j < attributes.length; j++) {
+              let attName = attributes[j].displayName
+
+              // Вырезаем код атрибута из параметра href
+              let attCode = 'ATT_'.concat(attributes[j].href.slice(att_code_slice)).split('@')[0]
+              let attConcat = attCode.concat(' - ', attName)
+
+              if (attCode === 'ATT_productID') {
+                attConcat = 'Код продукта'
+              }
+              if (attCode === 'ATT_12963') {
+                attConcat = 'ATT_12963 - Название на сайте'
+              }
+              if (attCode === 'ATT_01022') {
+                attConcat = 'ATT_01022 - Описание'
+                pQ['description'] += 1
+              }
+              if (attCode === 'ATT_3') {
+                attConcat = 'Отдел'
+              }
+              if (attCode === 'ATT_6') {
+                attConcat = 'Дата AVS'
+                pQ['avs'] += 1
+              }
+
+              let attValue = attributes[j].value[0]
+              product[attConcat] = attValue
+              att.add(attConcat)
+            }
+            productsNew.push(product)
+
+            for (let i = 0; i < productsNew.length; i++) {
+              // Заполняем данные по количествам
+              let product = productsNew[i]
+              for (let key of att) {
+                if (!(key in product)) {
+                  if (key === 'ATT_01022 - Описание') {
+                    productsNew[i][key] = 'Нет описания'
+                  } else {
+                    productsNew[i][key] = ''
+                  }
+                }
+              }
+            }
+            for (let key of att) {
+              if (!(firstCols.includes(key))) {
+                columns[key] = key
+                fields.push({
+                  key: key,
+                  label: key.concat(' __________________________________'),
+                  sortable: true
+                })
               }
             }
           }
-        }
-        let columns = {
-          'Код продукта': 'Код продукта',
-          'Название на сайте': 'Название на сайте',
-          'Отдел': 'Отдел',
-          'Дата AVS': 'Дата AVS',
-          'ATT_01022 - Описание': 'ATT_01022 - Описание'
-        }
-        let fields = [
-          {
-            key: 'Код продукта',
-            label: 'Код продукта',
-            sortable: true
-          },
-          {
-            key: 'Название на сайте',
-            label: 'Название на сайте ________________________________________________',
-            sortable: true
-          },
-          {
-            key: 'Отдел',
-            label: 'Отдел',
-            sortable: true
-          },
-          {
-            key: 'Дата AVS',
-            label: 'Дата AVS',
-            sortable: true
-          },
-          'ATT_01022 - Описание'
-        ]
-        for (let key of att) {
-          if (!(firstCols.includes(key))) {
-            columns[key] = key
-            fields.push({
-              key: key,
-              label: key.concat(' __________________________________'),
-              sortable: true
-            })
-          }
-        }
+        })
+        .catch(e => {
+          this.errors.push(e)
+        })
+    }
 
-        vuexContext.commit('setColumns', columns)
-        vuexContext.commit('setFields', fields)
-        vuexContext.commit('setProducts', productsNew)
-        vuexContext.commit('setProductsQty', pQ)
-        vuexContext.commit('setIsLoaded', false)
-      })
-      .catch(e => {
-        this.errors.push(e)
-      })
+    // Вставляем пустые значения по тем артикулам, которые не заполнены
+    vuexContext.commit('setColumns', columns)
+    vuexContext.commit('setFields', fields)
+    vuexContext.commit('setProducts', productsNew)
+    vuexContext.commit('setProductsQty', pQ)
+    vuexContext.commit('setIsLoaded', false)
   }
 }
 
