@@ -39,7 +39,7 @@ const getters = {
   allModels: state => state.allModels,
   modelGroupId: state => state.modelGroupId,
   closeModels: state => state.closeModels,
-  nearModels: state => state.nearModels,
+  nearModels: state => state.nearModels
 }
 
 // actions

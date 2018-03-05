@@ -1,23 +1,23 @@
 <template>
   <b-container fluid>
-    <b-row>
-      <b-col cols="1">
-        <b-form-checkbox id="checkbox1"
-                         v-model="avs"
-                         value="accepted"
-                         unchecked-value="not_accepted">
-          без AVS
-        </b-form-checkbox>
-      </b-col>
-      <b-col>
-        <b-form-checkbox id="checkbox2"
-                         v-model="description"
-                         value="accepted"
-                         unchecked-value="not_accepted">
-          без описаний
-        </b-form-checkbox>
-      </b-col>
-    </b-row>
+    <!--<b-row>-->
+      <!--<b-col cols="1">-->
+        <!--<b-form-checkbox id="checkbox1"-->
+                         <!--v-model="avs"-->
+                         <!--value="accepted"-->
+                         <!--unchecked-value="not_accepted">-->
+          <!--без AVS-->
+        <!--</b-form-checkbox>-->
+      <!--</b-col>-->
+      <!--<b-col>-->
+        <!--<b-form-checkbox id="checkbox2"-->
+                         <!--v-model="description"-->
+                         <!--value="accepted"-->
+                         <!--unchecked-value="not_accepted">-->
+          <!--без описаний-->
+        <!--</b-form-checkbox>-->
+      <!--</b-col>-->
+    <!--</b-row>-->
     <b-row>
       <b-col cols="4" class="my-1">
         <b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage"></b-pagination>
