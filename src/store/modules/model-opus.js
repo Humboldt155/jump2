@@ -1,4 +1,5 @@
 import axios from 'axios'
+import https from 'https'
 
 const firstCols = ['Код продукта', 'ATT_12963 - Название на сайте', 'Отдел', 'Дата AVS', 'ATT_01022 - Описание']
 
@@ -31,6 +32,9 @@ const mutations = {
     state.columns = columns
   },
   setFields (state, fields) {
+    console.log(fields.length)
+    let fieldsClear = fields.filter((thing, index, self) =>
+      self.findIndex(t => t.label === thing.label) === index)
     state.fields = fields
   },
   setProductsTest (state, productsTest) {
@@ -66,7 +70,10 @@ const actions = {
       headers: {
         'Authorization': 'Basic d2lrZW86b2VraXc',
         'X-Opus-Publish-Status': 'published'
-      }
+      },
+      httpsAgent: new https.Agent({
+        rejectUnauthorized: false
+      })
     })
       .then(response => {
         vuexContext.commit('setModelOpus', response.data)
@@ -171,13 +178,16 @@ const actions = {
             for (let key of att) {
               if (!(firstCols.includes(key))) {
                 columns[key] = key
-                fields.push({
+                let newObj = {
                   key: key,
                   label: key.concat(' __________________________________'),
                   sortable: true
-                })
+                }
+                fields.push(newObj)
               }
             }
+            // fields = fields.filter((thing, index, self) =>
+            //   self.findIndex(t => t.label === thing.label) === index)
           }
         })
         .catch(e => {
