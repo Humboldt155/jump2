@@ -45,9 +45,9 @@
           <!-- Подробная информация о модели в раскрывающемся списке -->
 
         </b-container>
-          <b-alert variant="info" :show="true">
+          <b-alert variant="info" :show="isLoaded">
             <h5>Ждите, идет загрузка...</h5><br>
-            <b-progress show-progress :value="productsQty.total" :max="totalCount" variant="warning"></b-progress>
+            <b-progress show-progress :precision="1" :value="productsQty.total" :max="totalCount" variant="warning"></b-progress>
           </b-alert>
       </b-card>
     </b-container>
@@ -103,7 +103,7 @@ export default {
     onLoadModel: function () {
       this.$store.dispatch('setModelId', this.modelId)
       this.$store.dispatch('setProducts', this.modelId)
-      this.$store.dispatch('setModelOpus', this.modelId)
+      // this.$store.dispatch('setModelOpus', this.modelId)
       this.$store.dispatch('setModelAdeo', this.modelId)
       const mg = this.$store.getters.modelGroup
       this.$store.dispatch('setModelGroupId', mg.toString())

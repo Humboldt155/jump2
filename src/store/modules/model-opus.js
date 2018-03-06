@@ -15,16 +15,13 @@ const state = {
   fields: [],
   productsTest: '',
   attributes: [],
-  productsQty: {},
+  productsQty: {total: 0, avs: 0, description: 0, noDescriptionAvs: 0},
   totalCount: 0,
   isLoaded: false
 }
 
 // mutations
 const mutations = {
-  setModelOpus (state, modelOpus) {
-    state.modelOpus = modelOpus
-  },
   setProducts (state, products) {
     state.products = products
     // Вставляем пустые значения по тем артикулам, которые не заполнен
@@ -39,9 +36,6 @@ const mutations = {
   setFields (state, fields) {
     state.fields = fields
   },
-  setProductsTest (state, productsTest) {
-    state.productsTest = productsTest
-  },
   setAttributes (state, attributes) {
     state.attributes = attributes
   },
@@ -55,11 +49,9 @@ const mutations = {
 
 // getters
 const getters = {
-  modelOpus: state => state.modelOpus,
   products: state => state.products,
   columns: state => state.columns,
   fields: state => state.fields,
-  productsTest: state => state.productsTest,
   attributes: state => state.attributes,
   productsQty: state => state.productsQty,
   totalCount: state => state.totalCount,
@@ -68,23 +60,6 @@ const getters = {
 
 // actions
 const actions = {
-  setModelOpus (vuexContext, modelId) {
-    axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/foundation/v2/modelTypes/Product/models/'.concat(modelId), {
-      headers: {
-        'Authorization': 'Basic d2lrZW86b2VraXc',
-        'X-Opus-Publish-Status': 'published'
-      },
-      httpsAgent: new https.Agent({
-        rejectUnauthorized: false
-      })
-    })
-      .then(response => {
-        vuexContext.commit('setModelOpus', response.data)
-      })
-      .catch(e => {
-        this.errors.push(e)
-      })
-  },
   setProducts (vuexContext, modelId) {
     let productsNew = []
     let columns = {
@@ -103,23 +78,25 @@ const actions = {
     // ]
     let pQ = {total: 0, avs: 0, description: 0, noDescriptionAvs: 0}
     let att = new Set() // Набор всех возможных аттрибутов
+    let totalCount = 0
 
-    axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize=1&startFrom=1&filter=modelCode%3A'
-      .concat(modelId, '&expand=attributes&context=lang%3Aru'), {
-      headers: {
-        'Authorization': 'Basic d2lrZW86b2VraXc',
-        'X-Opus-Publish-Status': 'published'
-      }
-    })
-      .then(response => {
-        const totalCount = response.data.totalCount
-        vuexContext.commit('setTotalCount', totalCount)
-      })
-      .catch(e => {
-        this.errors.push(e)
-      })
+    // axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize=1&startFrom=1&filter=modelCode%3A'
+    //   .concat(modelId, '&expand=attributes&context=lang%3Aru'), {
+    //   headers: {
+    //     'Authorization': 'Basic d2lrZW86b2VraXc',
+    //     'X-Opus-Publish-Status': 'published'
+    //   }
+    // })
+    //   .then(response => {
+    //     totalCount = response.data.totalCount
+    //     vuexContext.commit('setTotalCount', totalCount)
+    //   })
+    //   .catch(e => {
+    //     this.errors.push(e)
+    //   })
 
     for (let req = 0; req < 300; req++) {
+
       axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize='
         .concat(reqQty, '&startFrom=', 1 + req * reqQty, '&filter=modelCode%3A', modelId, '&expand=attributes&context=lang%3Aru'), {
         headers: {
@@ -128,6 +105,8 @@ const actions = {
         }
       })
         .then(response => {
+          totalCount = response.data.totalCount
+          vuexContext.commit('setTotalCount', totalCount)
           const resp = response.data.content
 
           // Временный сет, в котором будем хранить все возможные значения атрибутов
@@ -143,6 +122,7 @@ const actions = {
               pQ['total'] += 1 // + Товар Всего
             }
 
+            vuexContext.commit('setIsLoaded', !(totalCount === pQ.total) )
             // Лист всех атрибутов выбранного продукта
             let attributes = resp[i].attribute.filter(function (attribute) {
               let code = attribute.href.slice(attCodeSlice).split('@')[0]
