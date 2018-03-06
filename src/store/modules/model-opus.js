@@ -129,8 +129,6 @@ const actions = {
       })
         .then(response => {
           const resp = response.data.content
-          const totalCount = response.data.totalCount
-          vuexContext.commit('setTotalCount', totalCount)
 
           // Временный сет, в котором будем хранить все возможные значения атрибутов
 

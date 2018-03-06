@@ -45,7 +45,10 @@
           <!-- Подробная информация о модели в раскрывающемся списке -->
 
         </b-container>
-        <b-alert variant="warning" :show="isLoaded">Ждите, идет загрузка...</b-alert>
+          <b-alert variant="info" :show="true">
+            <h5>Ждите, идет загрузка...</h5><br>
+            <b-progress show-progress :value="productsQty.total" :max="totalCount" variant="warning"></b-progress>
+          </b-alert>
       </b-card>
     </b-container>
 
@@ -113,6 +116,9 @@ export default {
   computed: {
     modelAdeo () {
       return this.$store.getters.modelAdeo
+    },
+    totalCount () {
+      return this.$store.getters.totalCount
     },
     isLoaded () {
       return this.$store.getters.isLoaded
