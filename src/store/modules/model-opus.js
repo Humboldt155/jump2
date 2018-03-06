@@ -5,7 +5,7 @@ const firstCols = ['Код продукта', 'ATT_12963 - Название на
 
 const attCodeSlice = '/foundation/v2/attributes/'.length
 
-const reqQty = 50
+const reqQty = 25
 
 // initial state
 const state = {
@@ -17,7 +17,8 @@ const state = {
   attributes: [],
   productsQty: {total: 0, avs: 0, description: 0, noDescriptionAvs: 0},
   totalCount: 0,
-  isLoaded: false
+  isLoaded: false,
+  test: []
 }
 
 // mutations
@@ -28,6 +29,10 @@ const mutations = {
   },
   setTotalCount (state, totalCount) {
     state.totalCount = totalCount
+    // Вставляем пустые значения по тем артикулам, которые не заполнен
+  },
+  setTest (state, test) {
+    state.totalCount = test
     // Вставляем пустые значения по тем артикулам, которые не заполнен
   },
   setColumns (state, columns) {
@@ -55,6 +60,7 @@ const getters = {
   attributes: state => state.attributes,
   productsQty: state => state.productsQty,
   totalCount: state => state.totalCount,
+  test: state => state.test,
   isLoaded: state => state.isLoaded
 }
 
@@ -69,34 +75,19 @@ const actions = {
       'Дата AVS': 'Дата AVS',
       'ATT_01022 - Описание': 'ATT_01022 - Описание'
     }
-    // let fields = [
-    //   {key: 'Код продукта', label: 'Код продукта', sortable: true},
-    //   {key: 'ATT_12963 - Название на сайте', label: 'Название на сайте ________________________________________________', sortable: true},
-    //   {key: 'Отдел', label: 'Отдел', sortable: true},
-    //   {key: 'Дата AVS', label: 'Дата AVS', sortable: true},
-    //   'ATT_01022 - Описание'
-    // ]
+    let fields = [
+      {key: 'Код продукта', label: 'Код продукта', sortable: true},
+      {key: 'ATT_12963 - Название на сайте', label: 'Название на сайте ________________________________________________', sortable: true},
+      {key: 'Отдел', label: 'Отдел', sortable: true},
+      {key: 'Дата AVS', label: 'Дата AVS', sortable: true},
+      'ATT_01022 - Описание'
+    ]
     let pQ = {total: 0, avs: 0, description: 0, noDescriptionAvs: 0}
     let att = new Set() // Набор всех возможных аттрибутов
-    let totalCount = 0
+    let totalCount = -1
 
-    // axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize=1&startFrom=1&filter=modelCode%3A'
-    //   .concat(modelId, '&expand=attributes&context=lang%3Aru'), {
-    //   headers: {
-    //     'Authorization': 'Basic d2lrZW86b2VraXc',
-    //     'X-Opus-Publish-Status': 'published'
-    //   }
-    // })
-    //   .then(response => {
-    //     totalCount = response.data.totalCount
-    //     vuexContext.commit('setTotalCount', totalCount)
-    //   })
-    //   .catch(e => {
-    //     this.errors.push(e)
-    //   })
-
-    for (let req = 0; req < 300; req++) {
-
+    for (let req = 0; req < 600; req++) {
+      if (totalCount === pQ.total) break
       axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize='
         .concat(reqQty, '&startFrom=', 1 + req * reqQty, '&filter=modelCode%3A', modelId, '&expand=attributes&context=lang%3Aru'), {
         headers: {
@@ -177,12 +168,12 @@ const actions = {
             for (let key of att) {
               if (!(firstCols.includes(key))) {
                 columns[key] = key
-                // let newObj = {
-                //   key: key,
-                //   label: key.concat(' __________________________________'),
-                //   sortable: true
-                // }
-                // fields.push(newObj)
+                let newObj = {
+                  key: key,
+                  label: key.concat(' __________________________________'),
+                  sortable: true
+                }
+                fields.push(newObj)
               }
             }
           }
@@ -192,7 +183,7 @@ const actions = {
         })
     }
     vuexContext.commit('setColumns', columns)
-    // vuexContext.commit('setFields', fields)
+    vuexContext.commit('setFields', fields)
     vuexContext.commit('setProducts', productsNew)
     vuexContext.commit('setProductsQty', pQ)
   },
