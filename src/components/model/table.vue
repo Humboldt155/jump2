@@ -85,7 +85,19 @@ export default {
       return this.$store.getters.modelId
     },
     fields () {
-      return this.$store.getters.fields
+      let cols = this.$store.getters.columns
+      let fields = []
+      //   {key: 'Код продукта', label: 'Код продукта', sortable: true},
+      //   {key: 'ATT_12963 - Название на сайте', label: 'Название на сайте ________________________________________________', sortable: true},
+      //   {key: 'Отдел', label: 'Отдел', sortable: true},
+      //   {key: 'Дата AVS', label: 'Дата AVS', sortable: true},
+      //   'ATT_01022 - Описание'
+      // ]
+      for (let i = 0; i < cols.length; i++) {
+        fields.push({key: cols[i]}, {label: cols[i]})
+      }
+      // this.$store.dispatch('setFields', fields)
+      return fields
     },
     columns () {
       return this.$store.getters.columns

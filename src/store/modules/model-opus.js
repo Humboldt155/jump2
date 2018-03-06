@@ -16,6 +16,7 @@ const state = {
   productsTest: '',
   attributes: [],
   productsQty: {},
+  totalCount: 0,
   isLoaded: false
 }
 
@@ -28,13 +29,14 @@ const mutations = {
     state.products = products
     // Вставляем пустые значения по тем артикулам, которые не заполнен
   },
+  setTotalCount (state, totalCount) {
+    state.totalCount = totalCount
+    // Вставляем пустые значения по тем артикулам, которые не заполнен
+  },
   setColumns (state, columns) {
     state.columns = columns
   },
   setFields (state, fields) {
-    console.log(fields.length)
-    let fieldsClear = fields.filter((thing, index, self) =>
-      self.findIndex(t => t.label === thing.label) === index)
     state.fields = fields
   },
   setProductsTest (state, productsTest) {
@@ -60,6 +62,7 @@ const getters = {
   productsTest: state => state.productsTest,
   attributes: state => state.attributes,
   productsQty: state => state.productsQty,
+  totalCount: state => state.totalCount,
   isLoaded: state => state.isLoaded
 }
 
@@ -91,15 +94,30 @@ const actions = {
       'Дата AVS': 'Дата AVS',
       'ATT_01022 - Описание': 'ATT_01022 - Описание'
     }
-    let fields = [
-      {key: 'Код продукта', label: 'Код продукта', sortable: true},
-      {key: 'ATT_12963 - Название на сайте', label: 'Название на сайте ________________________________________________', sortable: true},
-      {key: 'Отдел', label: 'Отдел', sortable: true},
-      {key: 'Дата AVS', label: 'Дата AVS', sortable: true},
-      'ATT_01022 - Описание'
-    ]
+    // let fields = [
+    //   {key: 'Код продукта', label: 'Код продукта', sortable: true},
+    //   {key: 'ATT_12963 - Название на сайте', label: 'Название на сайте ________________________________________________', sortable: true},
+    //   {key: 'Отдел', label: 'Отдел', sortable: true},
+    //   {key: 'Дата AVS', label: 'Дата AVS', sortable: true},
+    //   'ATT_01022 - Описание'
+    // ]
     let pQ = {total: 0, avs: 0, description: 0, noDescriptionAvs: 0}
     let att = new Set() // Набор всех возможных аттрибутов
+
+    axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize=1&startFrom=1&filter=modelCode%3A'
+      .concat(modelId, '&expand=attributes&context=lang%3Aru'), {
+      headers: {
+        'Authorization': 'Basic d2lrZW86b2VraXc',
+        'X-Opus-Publish-Status': 'published'
+      }
+    })
+      .then(response => {
+        const totalCount = response.data.totalCount
+        vuexContext.commit('setTotalCount', totalCount)
+      })
+      .catch(e => {
+        this.errors.push(e)
+      })
 
     for (let req = 0; req < 300; req++) {
       axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize='
@@ -111,6 +129,9 @@ const actions = {
       })
         .then(response => {
           const resp = response.data.content
+          const totalCount = response.data.totalCount
+          vuexContext.commit('setTotalCount', totalCount)
+
           // Временный сет, в котором будем хранить все возможные значения атрибутов
 
           // Проходим циклом через все продукты, которые получили из БД Опуса
@@ -178,16 +199,14 @@ const actions = {
             for (let key of att) {
               if (!(firstCols.includes(key))) {
                 columns[key] = key
-                let newObj = {
-                  key: key,
-                  label: key.concat(' __________________________________'),
-                  sortable: true
-                }
-                fields.push(newObj)
+                // let newObj = {
+                //   key: key,
+                //   label: key.concat(' __________________________________'),
+                //   sortable: true
+                // }
+                // fields.push(newObj)
               }
             }
-            // fields = fields.filter((thing, index, self) =>
-            //   self.findIndex(t => t.label === thing.label) === index)
           }
         })
         .catch(e => {
@@ -195,9 +214,12 @@ const actions = {
         })
     }
     vuexContext.commit('setColumns', columns)
-    vuexContext.commit('setFields', fields)
+    // vuexContext.commit('setFields', fields)
     vuexContext.commit('setProducts', productsNew)
     vuexContext.commit('setProductsQty', pQ)
+  },
+  setFields (vuexContext, fields) {
+    vuexContext.commit('setFields', fields)
   }
 }
 
