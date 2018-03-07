@@ -67,6 +67,7 @@ const getters = {
 // actions
 const actions = {
   setProducts (vuexContext, modelId) {
+    vuexContext.commit('setTotalCount', -1)
     let productsNew = []
     let columns = {
       'Код продукта': 'Код продукта',
@@ -85,9 +86,22 @@ const actions = {
     let pQ = {total: 0, avs: 0, description: 0, noDescriptionAvs: 0}
     let att = new Set() // Набор всех возможных аттрибутов
     let totalCount = -1
+    axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize=1&startFrom=1&filter=modelCode%3A'
+      .concat(modelId, '&expand=attributes&context=lang%3Aru'), {
+      headers: {
+        'Authorization': 'Basic d2lrZW86b2VraXc',
+        'X-Opus-Publish-Status': 'published'
+      }
+    })
+      .then(response => {
+        vuexContext.commit('setTotalCount', response.data.totalCount)
+      })
+      .catch(e => {
+        this.errors.push(e)
+      })
 
     for (let req = 0; req < 600; req++) {
-      if (totalCount === pQ.total) break
+      // if (totalCount === pQ.total) break
       axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize='
         .concat(reqQty, '&startFrom=', 1 + req * reqQty, '&filter=modelCode%3A', modelId, '&expand=attributes&context=lang%3Aru'), {
         headers: {
@@ -96,9 +110,11 @@ const actions = {
         }
       })
         .then(response => {
-          totalCount = response.data.totalCount
-          vuexContext.commit('setTotalCount', totalCount)
+          // totalCount = response.data.totalCount
+          // vuexContext.commit('setTotalCount', totalCount)
           const resp = response.data.content
+
+          // if (resp.length === 0) break
 
           // Временный сет, в котором будем хранить все возможные значения атрибутов
 
@@ -107,13 +123,9 @@ const actions = {
             // Создаем объект, в котором будем хранить аттрибуты и значения выбранного продукта
             let product = {}
 
-            if (resp.length === 0) {
-              break
-            } else {
-              pQ['total'] += 1 // + Товар Всего
-            }
+            pQ['total'] += 1 // + Товар Всего
 
-            vuexContext.commit('setIsLoaded', !(totalCount === pQ.total) )
+            // vuexContext.commit('setIsLoaded', !(totalCount === pQ.total))
             // Лист всех атрибутов выбранного продукта
             let attributes = resp[i].attribute.filter(function (attribute) {
               let code = attribute.href.slice(attCodeSlice).split('@')[0]
@@ -165,23 +177,25 @@ const actions = {
                 }
               }
             }
-            for (let key of att) {
-              if (!(firstCols.includes(key))) {
-                columns[key] = key
-                let newObj = {
-                  key: key,
-                  label: key.concat(' __________________________________'),
-                  sortable: true
-                }
-                fields.push(newObj)
+          }
+          for (let key of att) {
+            if (!(firstCols.includes(key))) {
+              columns[key] = key
+              let newObj = {
+                key: key,
+                label: key.concat(' __________________________________'),
+                sortable: true
               }
+              fields.push(newObj)
             }
           }
         })
         .catch(e => {
           this.errors.push(e)
         })
+      // if (totalCount === pQ.total) break
     }
+    vuexContext.commit('setIsLoaded', !(totalCount === pQ.total))
     vuexContext.commit('setColumns', columns)
     vuexContext.commit('setFields', fields)
     vuexContext.commit('setProducts', productsNew)

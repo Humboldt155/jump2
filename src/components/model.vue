@@ -121,7 +121,7 @@ export default {
       return this.$store.getters.totalCount
     },
     isLoaded () {
-      return this.$store.getters.isLoaded
+      return !(this.$store.getters.totalCount === this.$store.getters.productsQty.total)
     },
     closeModels () {
       return this.$store.getters.closeModels
