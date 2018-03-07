@@ -1,12 +1,17 @@
 <template>
   <b-container fluid>
-    <h2>Аттрибуты</h2>
+    {{ attributes }}
   </b-container>
 </template>
 
 <script>
 export default {
-  name: 'attributes'
+  name: 'attributes',
+  computed: {
+    attributes () {
+      return this.$store.getters.attributes
+    }
+  }
 }
 </script>
 

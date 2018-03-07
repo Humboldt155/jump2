@@ -1,5 +1,5 @@
 import axios from 'axios'
-import https from 'https'
+// import https from 'https'
 
 const firstCols = ['Код продукта', 'ATT_12963 - Название на сайте', 'Отдел', 'Дата AVS', 'ATT_01022 - Описание']
 
@@ -14,7 +14,7 @@ const state = {
   columns: [],
   fields: [],
   productsTest: '',
-  attributes: [],
+  attributes: {},
   productsQty: {total: 0, avs: 0, description: 0, noDescriptionAvs: 0},
   totalCount: 0,
   isLoaded: false,
@@ -69,6 +69,7 @@ const actions = {
   setProducts (vuexContext, modelId) {
     vuexContext.commit('setTotalCount', -1)
     let productsNew = []
+    let attributesFilled = {}
     let columns = {
       'Код продукта': 'Код продукта',
       'ATT_12963 - Название на сайте': 'ATT_12963 - Название на сайте',
@@ -158,6 +159,12 @@ const actions = {
                 pQ['avs'] += 1
               }
 
+              if (attConcat.hasOwnProperty(attConcat)) {
+                attributesFilled[attConcat]++
+              } else {
+                attributesFilled[attConcat] = 1
+              }
+
               let attValue = attributes[j].value[0]
               product[attConcat] = attValue
               att.add(attConcat)
@@ -171,6 +178,7 @@ const actions = {
                 if (!(key in product)) {
                   if (key === 'ATT_01022 - Описание') {
                     productsNew[i][key] = 'Нет описания'
+                    productsNew[i]['_cellVariants'] = {'ATT_01022 - Описание': 'secondary'}
                   } else {
                     productsNew[i][key] = ''
                   }
@@ -183,7 +191,7 @@ const actions = {
               columns[key] = key
               let newObj = {
                 key: key,
-                label: key.concat(' __________________________________'),
+                label: key.concat(' __________________________________________'),
                 sortable: true
               }
               fields.push(newObj)
@@ -200,6 +208,7 @@ const actions = {
     vuexContext.commit('setFields', fields)
     vuexContext.commit('setProducts', productsNew)
     vuexContext.commit('setProductsQty', pQ)
+    vuexContext.commit('setAttributes', attributesFilled)
   },
   setFields (vuexContext, fields) {
     vuexContext.commit('setFields', fields)
