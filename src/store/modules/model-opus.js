@@ -5,7 +5,7 @@ const firstCols = ['Код продукта', 'ATT_12963 - Название на
 
 const attCodeSlice = '/foundation/v2/attributes/'.length
 
-const reqQty = 100
+const reqQty = 50
 
 // initial state
 const state = {
@@ -100,7 +100,7 @@ const actions = {
         this.errors.push(e)
       })
 
-    for (let req = 0; req < 600; req++) {
+    for (let req = 0; req < 400; req++) {
       // if (totalCount === pQ.total) break
       axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize='
         .concat(reqQty, '&startFrom=', 1 + req * reqQty, '&filter=modelCode%3A', modelId, '&mode=mask&mask=Jump,Characteristics&expand=attributes&context=lang%3Aru'), {
@@ -128,6 +128,10 @@ const actions = {
             // vuexContext.commit('setIsLoaded', !(totalCount === pQ.total))
             // Лист всех атрибутов выбранного продукта
             let attributes = resp[i].chapter[0].attribute.concat(resp[i].chapter[1].attribute)
+
+            attributes = attributes.filter(function (el) {
+              return el.href.slice(attCodeSlice).split('@')[0] !== 'sourceCountryCode'
+            })
 
             for (let j = 0; j < attributes.length; j++) {
               let attName = attributes[j].displayName
