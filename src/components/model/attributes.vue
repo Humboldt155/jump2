@@ -29,9 +29,9 @@
               <b-col  cols="2">
                 <h6>Количество артикулов</h6>
               </b-col>
-              <b-col>
-                <h6>Показать артикулы</h6>
-              </b-col>
+              <!--<b-col>-->
+                <!--<h6>Показать артикулы</h6>-->
+              <!--</b-col>-->
             </b-row >
             <b-row v-for="value in row.item['values']" :key="value">
               <b-col>
@@ -40,11 +40,11 @@
               <b-col  cols="2">
                 {{ value[1] }}
               </b-col>
-              <b-col>
-                <b-button size="sm" @click="onShowProducts" variant="outline-info">
-                  добавить в список
-                </b-button>
-              </b-col>
+              <!--<b-col>-->
+                <!--<b-button size="sm" @click="onShowProducts" variant="outline-info">-->
+                  <!--добавить в список-->
+                <!--</b-button>-->
+              <!--</b-col>-->
             </b-row>
           </b-container>
         </b-card>

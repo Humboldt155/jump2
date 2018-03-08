@@ -19,28 +19,35 @@
     <br>
 
     <!--Схожие модели из этой же группы-->
-    <h5> Выбранная модель в иерархии Адео:</h5>
-    <h5> {{ modelsList[0] }}</h5>
-    <b-container fluid v-for="mg in modelsList[1]" :key="mg">
-      <h6>{{ mg[0] }}</h6>
-        <b-container fluid>
-          <b-row class="my-1" v-for="modelH in mg[1]" :key="modelH">
-            <b-col cols="6">
-              <b-button v-if="modelH.id===modelAdeo.id" size="sm" variant="warning" @click="pushModel(modelH.id)"> {{ modelH.id }} </b-button>
-              <b-button v-else size="sm" variant="outline-info" @click="pushModel(modelH.id)"> {{ modelH.id }} </b-button>
-              {{ modelH.russian_name }}
-            </b-col>
-            <b-col>
-              <b-badge variant="secondary">fr: </b-badge>
-              {{ modelH.french_name }}
-            </b-col>
-            <b-col>
-              <b-badge variant="secondary">en: </b-badge>
-              {{ modelH.english_name }}
-            </b-col>
-          </b-row>
+    <h5> Выбранная модель в иерархии Адео:</h5><br>
+
+    <h4>{{ (modelAdeo.model_group_adeo.slice(4,6)) }}</h4>
+
+    <b-container fluid>
+
+      <h5> {{ modelsList[0] }}</h5>
+
+      <b-container fluid v-for="mg in modelsList[1]" :key="mg">
+        <h6>{{ mg[0] }}</h6>
+          <b-container fluid>
+            <b-row class="my-1" v-for="modelH in mg[1]" :key="modelH">
+              <b-col cols="6">
+                <b-button v-if="modelH.id===modelAdeo.id" size="sm" variant="warning" @click="pushModel(modelH.id)"> {{ modelH.id }} </b-button>
+                <b-button v-else size="sm" variant="outline-info" @click="pushModel(modelH.id)"> {{ modelH.id }} </b-button>
+                {{ modelH.russian_name }}
+              </b-col>
+              <b-col>
+                <b-badge variant="secondary">fr: </b-badge>
+                {{ modelH.french_name }}
+              </b-col>
+              <b-col>
+                <b-badge variant="secondary">en: </b-badge>
+                {{ modelH.english_name }}
+              </b-col>
+            </b-row>
+          </b-container>
         </b-container>
-    </b-container>
+      </b-container>
   </b-container>
 </template>
 
