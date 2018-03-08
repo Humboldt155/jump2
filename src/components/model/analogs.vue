@@ -1,6 +1,6 @@
 <template>
   <b-container fluid>
-    <h2>Аналоги</h2>
+    <h2>Привязка аналогов по значениям атрибутов</h2>
   </b-container>
 </template>
 

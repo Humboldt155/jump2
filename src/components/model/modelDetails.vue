@@ -1,62 +1,46 @@
 <template>
   <b-container fluid>
 
-        {{ modelAdeo.id }} - {{ modelAdeo.russian_name }}<br>
-        <h5>Название</h5>
-        <b-badge variant="">French </b-badge> {{ modelAdeo.french_name }}<br>
-        <b-badge variant="primary">English</b-badge> {{ modelAdeo.english_name }}<br>
-        <b-badge variant="success">Russian</b-badge> {{ modelAdeo.russian_name }}<br>
-                <br>
-        <h5>Артикулов:</h5>
-        <b-badge variant="light">ВСЕГО             </b-badge>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ productsQty.total }}<br>
-        <b-badge variant="light">c AVS:              </b-badge>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ productsQty.total - productsQty.avs }}<br>
-        <b-badge variant="success">без AVS:            </b-badge>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ productsQty.avs }}<br>
-        <b-badge variant="success">c описаниями        </b-badge>&nbsp;&nbsp;{{ productsQty.description }}<br>
-        <b-badge variant="warning">без описаний        </b-badge>&nbsp;&nbsp;{{ productsQty.total - productsQty.description }}<br>
-        <br>
-        <!--Схожие модели из этой же группы-->
-        <h5>Ближайшие модели (3 уровень Адео)</h5>
+    {{ modelAdeo.id }} - {{ modelAdeo.russian_name }}<br>
+    <h5>Название</h5>
+    <b-badge variant="">French </b-badge> {{ modelAdeo.french_name }}<br>
+    <b-badge variant="primary">English</b-badge> {{ modelAdeo.english_name }}<br>
+    <b-badge variant="success">Russian</b-badge> {{ modelAdeo.russian_name }}<br><br>
+
+    <b-badge variant="light">Отдел Adeo</b-badge> {{ (modelAdeo.model_group_adeo.slice(4,6)) }}<br>
+    <b-badge variant="light">Подотдел Adeo</b-badge> {{ modelsList[0] }}<br>
+    <br>
+    <h5>Артикулов:</h5>
+    <b-badge variant="light">ВСЕГО             </b-badge>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ productsQty.total }}<br>
+    <b-badge variant="light">c AVS:              </b-badge>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ productsQty.total - productsQty.avs }}<br>
+    <b-badge variant="success">без AVS:            </b-badge>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ productsQty.avs }}<br>
+    <b-badge variant="success">c описаниями        </b-badge>&nbsp;&nbsp;{{ productsQty.description }}<br>
+    <b-badge variant="warning">без описаний        </b-badge>&nbsp;&nbsp;{{ productsQty.total - productsQty.description }}<br>
+    <br>
+
+    <!--Схожие модели из этой же группы-->
+    <h5> Выбранная модель в иерархии Адео:</h5>
+    <h5> {{ modelsList[0] }}</h5>
+    <b-container fluid v-for="mg in modelsList[1]" :key="mg">
+      <h6>{{ mg[0] }}</h6>
         <b-container fluid>
-          <b-row class="my-1" v-for="closeModel in closeModels" :key="closeModel">
+          <b-row class="my-1" v-for="modelH in mg[1]" :key="modelH">
             <b-col cols="6">
-              <b-button size="sm" variant="outline-info" @click="pushModel(closeModel.id)"> {{ closeModel.id }} </b-button>
-              {{ closeModel.russian_name }}
+              <b-button v-if="modelH.id===modelAdeo.id" size="sm" variant="warning" @click="pushModel(modelH.id)"> {{ modelH.id }} </b-button>
+              <b-button v-else size="sm" variant="outline-info" @click="pushModel(modelH.id)"> {{ modelH.id }} </b-button>
+              {{ modelH.russian_name }}
             </b-col>
             <b-col>
               <b-badge variant="secondary">fr: </b-badge>
-              {{ closeModel.french_name }}
+              {{ modelH.french_name }}
             </b-col>
             <b-col>
               <b-badge variant="secondary">en: </b-badge>
-              {{ closeModel.english_name }}
+              {{ modelH.english_name }}
             </b-col>
           </b-row>
         </b-container>
-        <br>
-        <h5>Ближайшие модели (2 уровень Адео)</h5>
-          <b-btn v-b-toggle.collapse1 variant="outline-info">
-            <span class="when-opened">скрыть</span>
-            <span class="when-closed">показать</span>
-          </b-btn>
-          <b-collapse id="collapse1">
-            <b-container fluid>
-              <b-row class="my-1" v-for="nearModel in nearModels" :key="nearModel">
-                <b-col cols="6">
-                  <b-button size="sm" variant="outline-info" @click="pushModel(nearModel.id)"> {{ nearModel.id }} </b-button>
-                  {{ nearModel.russian_name }}
-                </b-col>
-                <b-col>
-                  <b-badge variant="secondary">fr: </b-badge>
-                  {{ nearModel.french_name }}
-                </b-col>
-                <b-col>
-                  <b-badge variant="secondary">en: </b-badge>
-                  {{ nearModel.english_name }}
-                </b-col>
-              </b-row>
-            </b-container>
-          </b-collapse>
-
+    </b-container>
   </b-container>
 </template>
 
@@ -81,11 +65,8 @@ export default {
     modelAdeo () {
       return this.$store.getters.modelAdeo
     },
-    closeModels () {
-      return this.$store.getters.closeModels
-    },
-    nearModels () {
-      return this.$store.getters.nearModels
+    modelsList () {
+      return this.$store.getters.modelsList
     },
     productsQty () {
       return this.$store.getters.productsQty

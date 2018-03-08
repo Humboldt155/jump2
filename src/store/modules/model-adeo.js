@@ -4,10 +4,12 @@ import axios from 'axios'
 const state = {
   modelId: '',
   modelAdeo: {},
-  modelGroupId: '',
   allModels: [],
-  closeModels: [],
-  nearModels: []
+  modelGroup: {},
+  modelGroups: {},
+  modelsList: [],
+  subDepartment: {}
+
 }
 
 // mutations
@@ -21,14 +23,8 @@ const mutations = {
   setAllModels (state, allModels) {
     state.allModels = allModels
   },
-  setModelGroupId (state, modelGroupId) {
-    state.modelGroupId = modelGroupId
-  },
-  setCloseModels (state, closeModels) {
-    state.closeModels = closeModels
-  },
-  setNearModels (state, nearModels) {
-    state.nearModels = nearModels
+  setModelsList (state, modelsList) {
+    state.modelsList = modelsList
   }
 }
 
@@ -37,9 +33,7 @@ const getters = {
   modelId: state => state.modelId,
   modelAdeo: state => state.modelAdeo,
   allModels: state => state.allModels,
-  modelGroupId: state => state.modelGroupId,
-  closeModels: state => state.closeModels,
-  nearModels: state => state.nearModels
+  modelsList: state => state.modelsList
 }
 
 // actions
@@ -48,23 +42,70 @@ const actions = {
     vuexContext.commit('setModelId', modelId)
   },
   setModelAdeo (vuexContext, modelId) {
+    // Получаем модель по номеру модели
     axios.get('http://humboldt155.pythonanywhere.com/api/models/', {
       params: {
         id: 'MOD_'.concat(modelId)
       }
     })
       .then(response => {
+        // Получаем все данные о текущей модели
         vuexContext.commit('setModelAdeo', response.data[0])
-        const mg = response.data[0].model_group_adeo
-        vuexContext.commit('setModelGroupId', mg)
-        let closeModels = vuexContext.state.allModels.filter(function (model) {
-          return model.model_group_adeo === mg
+
+        // Получаем код группы моделей
+        const modelGroupId = response.data[0].model_group_adeo
+
+        const subDepaptmentId = 'SSRAY_'.concat(modelGroupId.slice(4, 10))
+
+        // В этой переменной будем хранить всю инфомрацию о текущем подотделе
+        let subDepartment = {}
+        let modelsList = []
+        // Получить группу, в которой находится текущая модель
+        axios.get('http://humboldt155.pythonanywhere.com/api/sub_departments_adeo/', {
+          params: {
+            id: subDepaptmentId
+          }
         })
-        let nearModels = vuexContext.state.allModels.filter(function (model) {
-          return model.model_group_adeo.slice(0, 10) === mg.slice(0, 10)
+          .then(response => {
+            subDepartment = response.data[0]
+            modelsList.push(subDepartment.name)
+            modelsList.push([])
+          })
+          .catch(e => {
+            this.errors.push(e)
+          })
+
+          // Получить все группы, входящие в подотдел
+        let modelGroups = []
+        axios.get('http://humboldt155.pythonanywhere.com/api/model_groups_adeo/', {
+          params: {
+            sub_department_adeo: subDepaptmentId
+          }
         })
-        vuexContext.commit('setCloseModels', closeModels)
-        vuexContext.commit('setNearModels', nearModels)
+          .then(response => {
+            modelGroups = response.data
+            for (let i = 0; i < modelGroups.length; i++) {
+              let mgName = modelGroups[i].name
+              let mgId = modelGroups[i].id
+              let models = []
+              axios.get('http://humboldt155.pythonanywhere.com/api/models/', {
+                params: {
+                  model_group_adeo: mgId
+                }
+              })
+                .then(response => {
+                  models = response.data
+                  modelsList[1].push([mgName, models])
+                })
+                .catch(e => {
+                  this.errors.push(e)
+                })
+            }
+            vuexContext.commit('setModelsList', modelsList)
+          })
+          .catch(e => {
+            this.errors.push(e)
+          })
       })
       .catch(e => {
         this.errors.push(e)
