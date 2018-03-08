@@ -12,6 +12,12 @@
           </b-input-group-append>
 
         </b-input-group>
+        <!--<b-form-checkbox v-model="avs"-->
+                         <!--value=true-->
+                         <!--unchecked-value=false-->
+                         <!--@change="setIsLoadAvs">-->
+          <!--загружать товары AVS-->
+        <!--</b-form-checkbox>-->
 
         <b-container fluid>
           <br>
@@ -89,7 +95,8 @@ export default {
   data () {
     return {
       tabIndex: 0,
-      modelId: this.$store.getters.modelId
+      modelId: this.$store.getters.modelId,
+      avs: this.$store.getters.isLoadAvs
     }
   },
   methods: {
@@ -101,9 +108,9 @@ export default {
       }
     },
     onLoadModel: function () {
+      this.$store.commit('setAttributes', [])
       this.$store.dispatch('setModelId', this.modelId)
       this.$store.dispatch('setProducts', this.modelId)
-      // this.$store.dispatch('setModelOpus', this.modelId)
       this.$store.dispatch('setModelAdeo', this.modelId)
       const mg = this.$store.getters.modelGroup
       this.$store.dispatch('setModelGroupId', mg.toString())
@@ -111,6 +118,10 @@ export default {
     pushModel: function (id) {
       this.modelId = id.slice(4)
       this.onLoadModel()
+    },
+    setIsLoadAvs () {
+      let avs = this.$store.getters.isLoadAvs
+      this.$store.commit('setIsLoadAvs', !avs)
     }
   },
   computed: {

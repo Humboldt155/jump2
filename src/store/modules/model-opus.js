@@ -14,17 +14,21 @@ const state = {
   columns: [],
   fields: [],
   productsTest: '',
-  attributes: {},
   productsQty: {total: 0, avs: 0, description: 0, noDescriptionAvs: 0},
   totalCount: 0,
   isLoaded: false,
-  test: []
+  test: [],
+  isLoadAvs: true
 }
 
 // mutations
 const mutations = {
   setProducts (state, products) {
     state.products = products
+    // Вставляем пустые значения по тем артикулам, которые не заполнен
+  },
+  setIsLoadAvs (state, bool) {
+    state.isLoadAvs = bool
     // Вставляем пустые значения по тем артикулам, которые не заполнен
   },
   setTotalCount (state, totalCount) {
@@ -41,9 +45,6 @@ const mutations = {
   setFields (state, fields) {
     state.fields = fields
   },
-  setAttributes (state, attributes) {
-    state.attributes = attributes
-  },
   setProductsQty (state, productsQty) {
     state.productsQty = productsQty
   },
@@ -57,11 +58,11 @@ const getters = {
   products: state => state.products,
   columns: state => state.columns,
   fields: state => state.fields,
-  attributes: state => state.attributes,
   productsQty: state => state.productsQty,
   totalCount: state => state.totalCount,
   test: state => state.test,
-  isLoaded: state => state.isLoaded
+  isLoaded: state => state.isLoaded,
+  isLoadAvs: state => state.isLoadAvs
 }
 
 // actions
@@ -69,7 +70,6 @@ const actions = {
   setProducts (vuexContext, modelId) {
     vuexContext.commit('setTotalCount', -1)
     let productsNew = []
-    let attributesFilled = {}
     let columns = {
       'Код продукта': 'Код продукта',
       'ATT_12963 - Название на сайте': 'ATT_12963 - Название на сайте',
@@ -111,22 +111,20 @@ const actions = {
         }
       })
         .then(response => {
-          // totalCount = response.data.totalCount
-          // vuexContext.commit('setTotalCount', totalCount)
           const resp = response.data.content
-
-          // if (resp.length === 0) break
-
-          // Временный сет, в котором будем хранить все возможные значения атрибутов
 
           // Проходим циклом через все продукты, которые получили из БД Опуса
           for (let i = 0; i < resp.length; i++) {
             // Создаем объект, в котором будем хранить аттрибуты и значения выбранного продукта
             let product = {}
 
-            pQ['total'] += 1 // + Товар Всего
+            pQ['total'] += 1 // + Товаров Всего
 
-            // vuexContext.commit('setIsLoaded', !(totalCount === pQ.total))
+            // let avsAttribute = resp[i].chapter[0].attribute.filter(function (el) {
+            //   return (el.href === '/foundation/v2/attributes/6@PimStd' && el.value[0].length >= 1)
+            // })
+            // if (!avsAttribute.length) continue
+
             // Лист всех атрибутов выбранного продукта
             let attributes = resp[i].chapter[0].attribute.concat(resp[i].chapter[1].attribute)
 
@@ -141,28 +139,16 @@ const actions = {
               let attCode = 'ATT_'.concat(attributes[j].href.slice(attCodeSlice)).split('@')[0]
               let attConcat = attCode.concat(' - ', attName)
 
-              if (attCode === 'ATT_productID') {
-                attConcat = 'Код продукта'
-              }
-              if (attCode === 'ATT_12963') {
-                attConcat = 'ATT_12963 - Название на сайте'
-              }
+              if (attCode === 'ATT_productID') attConcat = 'Код продукта'
+              if (attCode === 'ATT_12963') attConcat = 'ATT_12963 - Название на сайте'
               if (attCode === 'ATT_01022') {
                 attConcat = 'ATT_01022 - Описание'
                 pQ['description'] += 1
               }
-              if (attCode === 'ATT_3') {
-                attConcat = 'Отдел'
-              }
+              if (attCode === 'ATT_3') attConcat = 'Отдел'
               if (attCode === 'ATT_6') {
                 attConcat = 'Дата AVS'
                 pQ['avs'] += 1
-              }
-
-              if (attConcat.hasOwnProperty(attConcat)) {
-                attributesFilled[attConcat]++
-              } else {
-                attributesFilled[attConcat] = 1
               }
 
               let attValue = attributes[j].value[0]
@@ -173,11 +159,10 @@ const actions = {
 
             for (let i = 0; i < productsNew.length; i++) {
               // Заполняем данные по количествам
-              let product = productsNew[i]
               for (let key of att) {
-                if (!(key in product)) {
+                if (!(key in productsNew[i])) {
                   if (key === 'ATT_01022 - Описание') {
-                    productsNew[i][key] = 'Нет описания'
+                    productsNew[i][key] = ''
                     productsNew[i]['_cellVariants'] = {'ATT_01022 - Описание': 'secondary'}
                   } else {
                     productsNew[i][key] = ''
@@ -208,7 +193,6 @@ const actions = {
     vuexContext.commit('setFields', fields)
     vuexContext.commit('setProducts', productsNew)
     vuexContext.commit('setProductsQty', pQ)
-    vuexContext.commit('setAttributes', attributesFilled)
   },
   setFields (vuexContext, fields) {
     vuexContext.commit('setFields', fields)
