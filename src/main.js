@@ -8,9 +8,11 @@ import { store } from './store/index'
 import BootstrapVue from 'bootstrap-vue/dist/bootstrap-vue.esm'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import 'bootstrap/dist/css/bootstrap.css'
-// import Autocomplete from 'vuejs-auto-complete'
 import JsonExcel from 'vue-json-excel'
+import Autocomplete from 'v-autocomplete'
+import 'v-autocomplete/dist/v-autocomplete.css'
 
+Vue.use(Autocomplete)
 Vue.config.productionTip = false
 Vue.use(Vuex)
 Vue.use(BootstrapVue)

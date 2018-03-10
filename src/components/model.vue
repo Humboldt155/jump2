@@ -5,19 +5,13 @@
 
         <b-input-group size="md" prepend="MOD_">
 
-          <b-form-input v-model.lazy="modelId" placeholder="введите номер модели, например 200767, и нажмите ПРИМЕНИТЬ"></b-form-input>
+          <b-form-input v-model.lazy="modelId" placeholder="введите номер, н.п. 200767 и нажмите ПРИМЕНИТЬ"></b-form-input>
 
           <b-input-group-append>
             <b-btn variant="secondary" @click="onLoadModel">применить</b-btn>
           </b-input-group-append>
 
         </b-input-group>
-        <!--<b-form-checkbox v-model="avs"-->
-                         <!--value=true-->
-                         <!--unchecked-value=false-->
-                         <!--@change="setIsLoadAvs">-->
-          <!--загружать товары AVS-->
-        <!--</b-form-checkbox>-->
 
         <b-container fluid>
           <br>
@@ -84,6 +78,9 @@
 
 <script>
 
+import axios from 'axios'
+import SearchTemplate from './model/SearchTemplate.vue'
+
 import AnalogsComponent from './model/analogs'
 import AttributesComponent from './model/attributes'
 import ComplementaryComponent from './model/complementary'
@@ -94,12 +91,27 @@ export default {
   name: 'model',
   data () {
     return {
+      item: {id: 'MOD_123456', russian_name: 'Russian Name', english_name: 'English Name', french_name: 'French Name'},
+      items: [],
+      template: SearchTemplate,
       tabIndex: 0,
       modelId: this.$store.getters.modelId,
       avs: this.$store.getters.isLoadAvs
     }
   },
   methods: {
+    getLabel (item) {
+      if (item) {
+        return item.id.slice(4)
+      } else {
+        return ''
+      }
+    },
+    updateItems (text) {
+      this.items = this.$store.getters.allModels.filter((item) => {
+        return (new RegExp(text.toLowerCase())).test(item.russian_name.toLowerCase())
+      })
+    },
     linkClass (idx) {
       if (this.tabIndex === idx) {
         return ['bg-secondary', 'text-light']
