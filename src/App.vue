@@ -43,6 +43,7 @@ export default {
   },
   methods: {
     onLoadModel: function () {
+      this.$store.dispatch('setProductsSelected', [])
       this.$store.commit('setAttributes', [])
       this.$store.dispatch('setModelId', this.modelId)
       this.$store.dispatch('setProducts', this.modelId)

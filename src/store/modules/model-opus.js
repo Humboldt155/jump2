@@ -102,7 +102,7 @@ const actions = {
       })
 
     for (let req = 0; req < 400; req++) {
-      // if (totalCount === pQ.total) break
+      if (totalCount === pQ.total) break
       axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize='
         .concat(reqQty, '&startFrom=', 1 + req * reqQty, '&filter=modelCode%3A', modelId, '&mode=mask&mask=Jump,Characteristics&expand=attributes&context=lang%3Aru'), {
         headers: {
@@ -119,11 +119,6 @@ const actions = {
             let product = {}
 
             pQ['total'] += 1 // + Товаров Всего
-
-            // let avsAttribute = resp[i].chapter[0].attribute.filter(function (el) {
-            //   return (el.href === '/foundation/v2/attributes/6@PimStd' && el.value[0].length >= 1)
-            // })
-            // if (!avsAttribute.length) continue
 
             // Лист всех атрибутов выбранного продукта
             let attributes = resp[i].chapter[0].attribute.concat(resp[i].chapter[1].attribute)
