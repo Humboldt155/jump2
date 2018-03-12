@@ -37,14 +37,6 @@
                 </b-badge>
               </b-button>
             </b-col>
-            <b-col>
-              <b-button variant="info" size="sm">
-                avs:
-                <b-badge variant="light">
-                  {{ productsQty.avs }}
-                </b-badge>
-              </b-button>
-            </b-col>
           </b-row>
 
           <!-- Подробная информация о модели в раскрывающемся списке -->
@@ -60,19 +52,19 @@
     <!-- переключаемые вкладки (Таблица, Аналоги ...) -->
     <b-container fluid>
         <b-tabs pills card v-model="tabIndex">
-          <b-tab title="Table" active :title-link-class="linkClass(0)">
+          <b-tab title="Таблица" active :title-link-class="linkClass(0)">
             <jump-model-table/>
           </b-tab>
-          <b-tab title="Attributes" :title-link-class="linkClass(1)">
+          <b-tab title="Атрибуты" :title-link-class="linkClass(1)">
             <jump-model-attributes/>
           </b-tab>
-          <b-tab title="Analogs" :title-link-class="linkClass(2)">
+          <b-tab title="Аналоги" :title-link-class="linkClass(2)">
             <jump-model-analogs/>
           </b-tab>
-          <b-tab title="Complementary" :title-link-class="linkClass(3)">
+          <b-tab title="Комплементы" :title-link-class="linkClass(3)">
             <jump-model-complementary/>
           </b-tab>
-          <b-tab title="Model Info" :title-link-class="linkClass(4)">
+          <b-tab title="Информация о модели" :title-link-class="linkClass(4)">
             <jump-model-model-details/>
           </b-tab>
         </b-tabs>

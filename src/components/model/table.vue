@@ -20,8 +20,6 @@
           </b-button>
         </download-excel>
       </b-col>
-              <b-link target="_blank" href="https://leroymerlin.ru/catalogue/search/?q=16734800">Link</b-link>
-
     </b-row>
 
     <b-table
