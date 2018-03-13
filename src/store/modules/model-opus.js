@@ -104,7 +104,7 @@ const actions = {
     for (let req = 0; req < 400; req++) {
       if (totalCount === pQ.total) break
       axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize='
-        .concat(reqQty, '&startFrom=', 1 + req * reqQty, '&filter=modelCode%3A', modelId, '&mode=mask&mask=Jump,Characteristics&expand=attributes&context=lang%3Aru'), {
+        .concat(reqQty, '&startFrom=', 1 + req * reqQty, '&filter=modelCode%3A', modelId, '&mode=mask&mask=Jump,Characteristics&expand=attributes'), {
         headers: {
           'Authorization': 'Basic d2lrZW86b2VraXc',
           'X-Opus-Publish-Status': 'published'
@@ -124,7 +124,11 @@ const actions = {
             let attributes = resp[i].chapter[0].attribute.concat(resp[i].chapter[1].attribute)
 
             attributes = attributes.filter(function (el) {
-              return el.href.slice(attCodeSlice).split('@')[0] !== 'sourceCountryCode'
+              let end = el.href.slice(attCodeSlice).split('@')[1]
+              return el.href.slice(attCodeSlice).split('@')[0] !== 'sourceCountryCode' &&
+                end !== 'PimFeat/contexts/lang/en' &&
+                end !== 'PimFeat/contexts/lang/ru' &&
+                end !== 'PimFeat/contexts/lang/kk'
             })
 
             for (let j = 0; j < attributes.length; j++) {
