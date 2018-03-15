@@ -4,6 +4,7 @@ import modelAdeo from './modules/model-adeo'
 import modelOpus from './modules/model-opus'
 import attributes from './modules/attributes'
 import product from './modules/product'
+import opusdb from './modules/opusdb'
 
 Vue.use(Vuex)
 
@@ -12,6 +13,7 @@ export const store = new Vuex.Store({
     modelAdeo,
     modelOpus,
     attributes,
+    opusdb,
     product
   }
 })

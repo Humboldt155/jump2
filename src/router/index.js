@@ -4,6 +4,7 @@ import Model from '@/components/model'
 import ModelsList from '@/components/modelsList'
 import Product from '@/components/product'
 import home from '@/components/home'
+import opusdb from '@/components/opusdb'
 import search from '@/components/search'
 
 Vue.use(Router)
@@ -34,6 +35,11 @@ export default new Router({
       path: '/search/',
       name: 'search',
       component: search
+    },
+    {
+      path: '/opusdb/',
+      name: 'opusdb',
+      component: opusdb
     }
   ]
 })
