@@ -1,22 +1,105 @@
-
-// initial state
 import axios from 'axios/index'
 
+// Перечень кодов атрибутов, которые не нужны для выборки (Описание, Вес, и др.)
+const excludeAttributes = [
+  'sourceCountryCode',
+  '01022',
+  'productID',
+  '06575',
+  '00124',
+  'logistic-grossWeight',
+  '01305'
+]
+
+// Перечень меток атрибутов на других языках, которые не нужны для выборки
+const excludeLang = [
+  'PimFeat/contexts/lang/en',
+  'PimFeat/contexts/lang/ru',
+  'PimFeat/contexts/lang/kk'
+]
+
+// Код атрибута указан в ключе 'href' в формате '/foundation/v2/attributes/CODE@PimFeat'
+// для получения кода, понадобится вырезать из данной строки. Получаем количества знаков, после которого
+// идет код атрибута
 const attCodeSlice = '/foundation/v2/attributes/'.length
 
+// Количество артикулов, которое получаем за один запрос
+const productsPerCycle = 35
+
+// Количество циклов (исходя из того, что в Опус менее 200 000 артикулов
+const requestsQty = 200000 / productsPerCycle
+
 const state = {
+  // Глобальная переменная, в которой будем хранить конечные данные
   opusdb: [],
-  opusTotal: 0,
   opusCurrent: 0
 }
 
 // mutations
 const mutations = {
-  setOpusdb (state, opusdb) {
-    state.opusdb = opusdb
-  },
-  setOpusTotal (state, opusTotal) {
-    state.opusTotal = opusTotal
+  setOpusdb (state) {
+    // Запускаем цикл запросов
+    for (let req = 0; req < requestsQty; req++) {
+      // Запрос в базу данных с помощью axios
+      axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize='
+        .concat(productsPerCycle, '&startFrom=', 1 + (req * productsPerCycle), '&mode=mask&mask=Characteristics&expand=attributes'), {
+        headers: {
+          'Authorization': 'Basic d2lrZW86b2VraXc',
+          'X-Opus-Publish-Status': 'published'
+        }
+      })
+        .then(response => {
+          // Получаем ответ по запросу (список артикулов)
+          const resp = response.data.content
+
+          // Добавляем в каунтер количество обработанных артикулов
+          state.opusCurrent += resp.length
+
+          // Проходим циклом по всем полученным артикулам
+          for (let i = 0; i < resp.length; i++) {
+            // Получаем список атрибутов по конкрентному атрибуту
+            let attributes = resp[i].chapter[0].attribute
+
+            attributes = attributes.filter(function (el) {
+              // вырезаем из значения 'href' код атрибута
+              let attributeCode = el.href.slice(attCodeSlice).split('@')[0]
+
+              // вырезаем из значения 'href' код маркировку языка
+              let langMark = el.href.slice(attCodeSlice).split('@')[1]
+
+              // Применяем фильтр, чтобы исключить из списка ненужные атрибуты
+              return !excludeAttributes.includes(attributeCode) &&
+                !excludeLang.includes(langMark)
+            })
+
+            // Получаем номер модели
+            let model = 'MOD_'.concat(resp[i].model.code)
+
+            // получаем LMкод
+            let ID = resp[i].correlationId
+
+            // Запускаем цикл по всем атрибутам артикула
+            for (let j = 0; j < attributes.length; j++) {
+              // Получаем код и значение атрибута
+              let attName = attributes[j].displayName
+              let attValue = attributes[j].value[0]
+
+              // Вырезаем код атрибута из параметра href
+              let attCode = 'ATT_'.concat(attributes[j].href.slice(attCodeSlice)).split('@')[0]
+
+              // Создаем список значений (одна строчка в конечном файле)
+              let row = {code: ID, model: model, attCode: attCode, attName: attName, value: attValue}
+
+              // Добавляем строку в глобальную переменную
+              state.opusdb.push(row)
+            }
+          }
+        })
+        .catch(e => {
+          this.errors.push(e)
+        })
+    }
+    // state.opusdb = opusdb
   },
   setOpusCurrent (state, opusCurrent) {
     state.opusCurrent = opusCurrent
@@ -26,59 +109,12 @@ const mutations = {
 // getters
 const getters = {
   opusdb: state => state.opusdb,
-  opusTotal: state => state.opusTotal,
   opusCurrent: state => state.opusCurrent
 }
 
 // actions
 const actions = {
-  setOpusdb (vuexContext) {
-    let opusdb = []
-    axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize='
-      .concat(100, '&startFrom=', 1 + (0 * 50), '&mode=mask&mask=Characteristics&expand=attributes'), {
-      headers: {
-        'Authorization': 'Basic d2lrZW86b2VraXc',
-        'X-Opus-Publish-Status': 'published'
-      }
-    })
-      .then(response => {
-        const resp = response.data.content
-        // vuexContext.commit('setOpusdb', resp)
-        for (let i = 0; i < resp.length; i++) {
-          // vuexContext.commit('setOpusdb', resp[i])
-          let attributes = resp[i].chapter[0].attribute
-          attributes = attributes.filter(function (el) {
-            let end = el.href.slice(attCodeSlice).split('@')[1]
-            return el.href.slice(attCodeSlice).split('@')[0] !== 'sourceCountryCode' &&
-                el.href.slice(attCodeSlice).split('@')[0] !== '01022' &&
-                el.href.slice(attCodeSlice).split('@')[0] !== 'productID' &&
-                end !== 'PimFeat/contexts/lang/en' &&
-                end !== 'PimFeat/contexts/lang/ru' &&
-                end !== 'PimFeat/contexts/lang/kk'
-          })
 
-          let model = 'MOD_'.concat(resp[i].model.code)
-          let ID = resp[i].correlationId
-
-          for (let j = 0; j < attributes.length; j++) {
-            let attName = attributes[j].displayName
-            let attValue = attributes[j].value[0]
-
-            // Вырезаем код атрибута из параметра href
-            let attCode = 'ATT_'.concat(attributes[j].href.slice(attCodeSlice)).split('@')[0]
-
-            let row = {code: ID, model: model, attCode: attCode, attName: attName, value: attValue}
-
-            opusdb.push(row)
-          }
-        }
-        vuexContext.commit('setOpusdb', opusdb)
-      })
-      .catch(e => {
-        this.errors.push(e)
-      })
-    // vuexContext.commit('setOpusdb', opusdb)
-  }
 }
 
 export default {
