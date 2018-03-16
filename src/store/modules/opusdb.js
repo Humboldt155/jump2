@@ -60,6 +60,7 @@ const mutations = {
             // Получаем список атрибутов по конкрентному атрибуту
             let attributes = resp[i].chapter[0].attribute
 
+            // Запускаем фильтр, чтобы удалить из списка ненужные нам атрибуты
             attributes = attributes.filter(function (el) {
               // вырезаем из значения 'href' код атрибута
               let attributeCode = el.href.slice(attCodeSlice).split('@')[0]
@@ -99,7 +100,6 @@ const mutations = {
           this.errors.push(e)
         })
     }
-    // state.opusdb = opusdb
   },
   setOpusCurrent (state, opusCurrent) {
     state.opusCurrent = opusCurrent
