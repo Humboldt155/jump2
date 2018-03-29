@@ -41,11 +41,12 @@ const mutations = {
     // Запускаем цикл запросов
     for (let req = 0; req < requestsQty; req++) {
       // Запрос в базу данных с помощью axios
-      axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize='
-        .concat(productsPerCycle, '&startFrom=', 1 + (req * productsPerCycle), '&mode=mask&mask=Characteristics&expand=attributes'), {
+      axios.get('https://wikeo:oekiw@webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize='
+        // .concat(productsPerCycle, '&startFrom=', 1 + (req * productsPerCycle), '&mode=mask&mask=Characteristics&expand=attributes'), {
+        .concat(productsPerCycle, '&startFrom=', 1 + (req * productsPerCycle), '&mode=mask&mask=Characteristics&filter=NOT%20@(lifeCycle-AVSDate@PimStd):*&expand=attributes'), {
         headers: {
-          'Authorization': 'Basic d2lrZW86b2VraXc',
-          'X-Opus-Publish-Status': 'published'
+          'Authorization': 'Basic d2lrZW86b2VraXc'
+          // удалить 'X-Opus-Publish-Status': 'published'
         }
       })
         .then(response => {
