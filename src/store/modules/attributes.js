@@ -5,8 +5,7 @@ const state = {
   productsSelected: [],
   fieldsProd: [
     {key: 'Код продукта', label: 'Код продукта', sortable: true},
-    {key: 'ATT_12963 - Название на сайте', label: 'Название на сайте', sortable: true},
-    {key: 'Дата AVS', label: 'Дата AVS', sortable: true}
+    {key: 'ATT_12963 - Название на сайте', label: 'Название на сайте', sortable: true}
   ]
 }
 
@@ -45,9 +44,7 @@ const actions = {
           key === 'Код продукта' ||
           key === 'ATT_12963 - Название на сайте' ||
           key === 'ATT_01022 - Описание' ||
-          key === 'Дата AVS' ||
           key === 'ATT_logistic-grossWeight - Вес, кг' ||
-          key === 'ATT_12963 - Название на сайте' ||
           key === 'Отдел') continue
         if (value === '') continue
         if (key in attributes) {
@@ -55,7 +52,7 @@ const actions = {
         } else {
           attributes[key] = [1, {}]
         }
-        if (key === 'ATT_12963 - Название на сайте' || key === 'ATT_01022 - Описание' || key === 'Дата AVS' || key === 'ДATT_logistic-grossWeight - Вес, кг') continue
+        if (key === 'ATT_12963 - Название на сайте' || key === 'ATT_01022 - Описание' || key === 'ДATT_logistic-grossWeight - Вес, кг') continue
         if (value in attributes[key][1]) {
           attributes[key][1][value] += 1
         } else {
@@ -75,7 +72,7 @@ const actions = {
       let NZ = totalQty - qty
 
       valuesList.push(['Не заполнено', NZ])
-      attributesList.push({name: key, qty: qty, values: valuesList, percentage: percentage})
+      attributesList.push({code: key.slice(0, 9), name: key.slice(12, key.length), qty: qty, values: valuesList, percentage: percentage})
     }
     vuexContext.commit('setAttributes', attributesList)
   },

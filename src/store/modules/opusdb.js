@@ -4,7 +4,6 @@ import axios from 'axios/index'
 const excludeAttributes = [
   'sourceCountryCode',
   '01022',
-  'productID',
   '06575',
   '00124',
   'logistic-grossWeight',
@@ -27,7 +26,7 @@ const attCodeSlice = '/foundation/v2/attributes/'.length
 const productsPerCycle = 35
 
 // Количество циклов (исходя из того, что в Опус менее 200 000 артикулов
-const requestsQty = 200000 / productsPerCycle
+const requestsQty = 100000 / productsPerCycle
 
 const state = {
   // Глобальная переменная, в которой будем хранить конечные данные
@@ -42,11 +41,9 @@ const mutations = {
     for (let req = 0; req < requestsQty; req++) {
       // Запрос в базу данных с помощью axios
       axios.get('https://wikeo:oekiw@webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize='
-        // .concat(productsPerCycle, '&startFrom=', 1 + (req * productsPerCycle), '&mode=mask&mask=Characteristics&expand=attributes'), {
         .concat(productsPerCycle, '&startFrom=', 1 + (req * productsPerCycle), '&mode=mask&mask=Characteristics&filter=NOT%20@(lifeCycle-AVSDate@PimStd):*&expand=attributes'), {
         headers: {
           'Authorization': 'Basic d2lrZW86b2VraXc'
-          // удалить 'X-Opus-Publish-Status': 'published'
         }
       })
         .then(response => {

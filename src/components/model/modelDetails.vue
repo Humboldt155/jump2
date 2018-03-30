@@ -12,8 +12,6 @@
     <br>
     <h5>Артикулов:</h5>
     <b-badge variant="light">ВСЕГО             </b-badge>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ productsQty.total }}<br>
-    <b-badge variant="light">c AVS:              </b-badge>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ productsQty.avs }}<br>
-    <b-badge variant="success">без AVS:            </b-badge>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ productsQty.total - productsQty.avs }}<br>
     <b-badge variant="success">c описаниями        </b-badge>&nbsp;&nbsp;{{ productsQty.description }}<br>
     <b-badge variant="warning">без описаний        </b-badge>&nbsp;&nbsp;{{ productsQty.total - productsQty.description }}<br>
     <br>

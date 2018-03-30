@@ -95,6 +95,7 @@ export default {
   data () {
     return {
       fieldsAtt: [
+        {key: 'code', label: 'Код атрибута', sortable: true},
         {key: 'name', label: 'Наименование атрибута', sortable: true},
         {key: 'qty', label: 'Заполнено, шт.', sortable: true},
         {key: 'percentage', label: 'Заполнено, %', sortable: true},
@@ -118,8 +119,7 @@ export default {
       let productsSelected = []
       let columns = {
         'Код продукта': 'Код продукта',
-        'ATT_12963 - Название на сайте': 'ATT_12963 - Название на сайте',
-        'Дата AVS': 'Дата AVS',
+        'ATT_12963 - Название на сайте': 'ATT_12963 - Название на сайте'
       }
       columns[att] = att
       this.columns = columns

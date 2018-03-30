@@ -37,10 +37,9 @@ const getters = {
 // actions
 const actions = {
   setProductAttributes (vuexContext, productId) {
-    axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/business/v2/products/'.concat(productId, '_PimStd_Product'), {
+    axios.get('https://wikeo:oekiw@webtopdata2.lmru.opus.adeo.com:5000/business/v2/products/'.concat(productId, '_PimStd_Product'), {
       headers: {
-        'Authorization': 'Basic d2lrZW86b2VraXc',
-        'X-Opus-Publish-Status': 'published'
+        'Authorization': 'Basic d2lrZW86b2VraXc'
       }
     })
       .then(response => {

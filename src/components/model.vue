@@ -24,11 +24,6 @@
             <b-col cols="6">
               <h5>{{ modelAdeo.russian_name }}</h5>
             </b-col>
-              <b-col>
-                <b-button size="sm" variant="outline-info" @click="onRemoveAVS">
-                  Убрать AVS
-                </b-button>
-              </b-col>
             <b-col>
               <b-button variant="info" size="sm">
                 артикулов:
@@ -92,22 +87,10 @@ export default {
       items: [],
       template: SearchTemplate,
       tabIndex: 0,
-      modelId: this.$store.getters.modelId,
-      avs: this.$store.getters.isLoadAvs
+      modelId: this.$store.getters.modelId
     }
   },
   methods: {
-    onRemoveAVS () {
-      this.$store.dispatch('setProductsSelected', [])
-      this.$store.commit('setAttributes', [])
-      let products = this.$store.getters.products.filter(function (el) {
-        return el['Дата AVS'] === ''
-      })
-      let pq = {total: products.length, avs: 0, description: 0, noDescriptionAvs: 0}
-      this.$store.commit('setTotalCount', products.length)
-      this.$store.commit('setProductsQty', pq)
-      this.$store.commit('setProducts', products)
-    },
     getLabel (item) {
       if (item) {
         return item.id.slice(4)

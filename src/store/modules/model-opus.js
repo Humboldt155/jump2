@@ -1,7 +1,7 @@
 import axios from 'axios'
 // import https from 'https'
 
-const firstCols = ['Код продукта', 'ATT_12963 - Название на сайте', 'Отдел', 'Дата AVS', 'ATT_01022 - Описание']
+const firstCols = ['Код продукта', 'ATT_12963 - Название на сайте', 'Отдел', 'ATT_01022 - Описание']
 
 const attCodeSlice = '/foundation/v2/attributes/'.length
 
@@ -14,7 +14,7 @@ const state = {
   columns: [],
   fields: [],
   productsTest: '',
-  productsQty: {total: 0, avs: 0, description: 0, noDescriptionAvs: 0},
+  productsQty: {total: 0, description: 0, noDescriptionAvs: 0},
   totalCount: 0,
   isLoaded: false,
   test: [],
@@ -74,21 +74,19 @@ const actions = {
       'Код продукта': 'Код продукта',
       'ATT_12963 - Название на сайте': 'ATT_12963 - Название на сайте',
       'Отдел': 'Отдел',
-      'Дата AVS': 'Дата AVS',
       'ATT_01022 - Описание': 'ATT_01022 - Описание'
     }
     let fields = [
       {key: 'Код продукта', label: 'Код продукта', sortable: true},
       {key: 'ATT_12963 - Название на сайте', label: 'Название на сайте ________________________________________________', sortable: true},
       {key: 'Отдел', label: 'Отдел', sortable: true},
-      {key: 'Дата AVS', label: 'Дата AVS', sortable: true},
       'ATT_01022 - Описание'
     ]
     let pQ = {total: 0, avs: 0, description: 0, noDescriptionAvs: 0}
     let att = new Set() // Набор всех возможных аттрибутов
     let totalCount = -1
-    axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize=1&startFrom=1&filter=modelCode%3A'
-      .concat(modelId, '&expand=attributes&context=lang%3Aru'), {
+    axios.get('https://wikeo:oekiw@webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize=1&startFrom=1&filter=modelCode%3A'
+      .concat(modelId, '%20AND%20NOT%20@(lifeCycle-AVSDate@PimStd):*&expand=attributes&context=lang%3Aru'), {
       headers: {
         'Authorization': 'Basic d2lrZW86b2VraXc',
         'X-Opus-Publish-Status': 'published'
@@ -101,10 +99,10 @@ const actions = {
         this.errors.push(e)
       })
 
-    for (let req = 0; req < 400; req++) {
+    for (let req = 0; req < 150; req++) {
       if (totalCount === pQ.total) break
-      axios.get('https://webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize='
-        .concat(reqQty, '&startFrom=', 1 + req * reqQty, '&filter=modelCode%3A', modelId, '&mode=mask&mask=Jump,Characteristics&expand=attributes'), {
+      axios.get('https://wikeo:oekiw@webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize='
+        .concat(reqQty, '&startFrom=', 1 + req * reqQty, '&filter=NOT%20@(lifeCycle-AVSDate@PimStd):*%20AND%20modelCode%3A', modelId, '&mode=mask&mask=Jump,Characteristics&expand=attributes'), {
         headers: {
           'Authorization': 'Basic d2lrZW86b2VraXc',
           'X-Opus-Publish-Status': 'published'
@@ -126,6 +124,7 @@ const actions = {
             attributes = attributes.filter(function (el) {
               let end = el.href.slice(attCodeSlice).split('@')[1]
               return el.href.slice(attCodeSlice).split('@')[0] !== 'sourceCountryCode' &&
+                el.href.slice(attCodeSlice).split('@')[0] !== '6' &&
                 end !== 'PimFeat/contexts/lang/en' &&
                 end !== 'PimFeat/contexts/lang/ru' &&
                 end !== 'PimFeat/contexts/lang/kk'
