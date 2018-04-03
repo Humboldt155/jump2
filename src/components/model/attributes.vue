@@ -42,10 +42,10 @@
               </b-col>
               <b-col>
 
-                <b-button v-if="value[0]==='Не заполнено'" size="sm" @click="onCreateProductsList(value[0], row.item.name)" variant="outline-secondary">
+                <b-button v-if="value[0]==='Не заполнено'" size="sm" @click="onCreateProductsList(value[0], row.item.code.concat(' - ', row.item.name))" variant="outline-secondary">
                   список артикулов
                 </b-button>
-                <b-button v-else size="sm" @click="onCreateProductsList(value[0], row.item.name)" variant="outline-info">
+                <b-button v-else size="sm" @click="onCreateProductsList(value[0], row.item.code.concat(' - ', row.item.name))" variant="outline-info">
                   список артикулов
                 </b-button>
               </b-col>

@@ -14,6 +14,7 @@
           class   = "btn btn-default"
           :data   = "products"
           :fields = "columns"
+          :meta   = "json_meta"
           :name    = "file_name">
           <b-button size="sm" variant="info">
             Download EXCEL
@@ -53,7 +54,15 @@ export default {
     return {
       currentPage: 1,
       perPage: 10,
-      pageOptions: [ 10, 25, 50, 100, 500 ]
+      pageOptions: [ 10, 25, 50, 100, 500 ],
+      json_meta: [
+        [
+          {
+            'key': 'charset',
+            'value': 'utf-8'
+          }
+        ]
+      ]
     }
   },
   methods: {

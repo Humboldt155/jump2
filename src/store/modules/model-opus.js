@@ -88,8 +88,7 @@ const actions = {
     axios.get('https://wikeo:oekiw@webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize=1&startFrom=1&filter=modelCode%3A'
       .concat(modelId, '%20AND%20NOT%20@(lifeCycle-AVSDate@PimStd):*&expand=attributes&context=lang%3Aru'), {
       headers: {
-        'Authorization': 'Basic d2lrZW86b2VraXc',
-        'X-Opus-Publish-Status': 'published'
+        'Authorization': 'Basic d2lrZW86b2VraXc'
       }
     })
       .then(response => {
@@ -104,8 +103,7 @@ const actions = {
       axios.get('https://wikeo:oekiw@webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize='
         .concat(reqQty, '&startFrom=', 1 + req * reqQty, '&filter=NOT%20@(lifeCycle-AVSDate@PimStd):*%20AND%20modelCode%3A', modelId, '&mode=mask&mask=Jump,Characteristics&expand=attributes'), {
         headers: {
-          'Authorization': 'Basic d2lrZW86b2VraXc',
-          'X-Opus-Publish-Status': 'published'
+          'Authorization': 'Basic d2lrZW86b2VraXc'
         }
       })
         .then(response => {
@@ -150,6 +148,9 @@ const actions = {
               }
 
               let attValue = attributes[j].value[0]
+              if (Number(attValue) === attValue && attValue % 1 !== 0) {
+                attValue = attValue.toString().replace('.', ',')
+              }
               product[attConcat] = attValue
               att.add(attConcat)
             }
