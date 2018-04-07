@@ -12,6 +12,7 @@
     >
           <template slot="table-caption">
             <b-btn size="sm" variant="info" @click="onLoadAttributes">ПОКАЗАТЬ ВСЕ АТРИБУТЫ</b-btn>
+            <b-btn size="sm" variant="warning" @click="loadStep">STEP</b-btn>
           </template>
       <template slot="values" slot-scope="row">
         <b-button size="sm" @click.stop="row.toggleDetails" class="mr-2" variant="outline-secondary">
@@ -96,6 +97,7 @@ export default {
     return {
       fieldsAtt: [
         {key: 'code', label: 'Код атрибута', sortable: true},
+        {key: 'isOpen', label: 'Тип', sortable: true},
         {key: 'name', label: 'Наименование атрибута', sortable: true},
         {key: 'qty', label: 'Заполнено, шт.', sortable: true},
         {key: 'percentage', label: 'Заполнено, %', sortable: true},
@@ -111,6 +113,10 @@ export default {
   methods: {
     onLoadAttributes () {
       this.$store.dispatch('setAttributes', this.$store.getters.products)
+      this.attributes = this.$store.getters.attributes
+    },
+    loadStep () {
+      this.$store.commit('loadStep')
       this.attributes = this.$store.getters.attributes
     },
     onCreateProductsList (val, att) {

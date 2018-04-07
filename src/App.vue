@@ -12,6 +12,9 @@
           <b-nav-item href="#/models-list">Список моделей</b-nav-item>
           <b-nav-item href="#/opusdb">Все данные</b-nav-item>
         </b-navbar-nav>
+        <b-navbar-nav class="ml-auto">
+          <b-nav-item href="#/step">STEP</b-nav-item>
+        </b-navbar-nav>
 
       </b-collapse>
     </b-navbar>

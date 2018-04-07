@@ -1,4 +1,4 @@
-
+import axios from 'axios'
 // initial state
 const state = {
   attributes: [],
@@ -19,14 +19,31 @@ const mutations = {
   },
   setFieldsProd (state, fieldsProd) {
     state.fieldsProd = fieldsProd
-  }
+  },
+  loadStep (state) {
+    for (let i = 0; i < state.attributes.length; i++) {
+      let code = state.attributes[i]['code']
+      axios.get('http://humboldt155.pythonanywhere.com/api/attributes/', {
+        params: {
+          id: code
+        }
+      })
+        .then(response => {
+          state.attributes[i]['isOpen'] = response.data[0]['is_open'] ? 'открытый' : 'закрытый'
+        })
+        .catch(e => {
+          this.errors.push(e)
+        })
+    }
+  },
 }
 
 // getters
 const getters = {
   attributes: state => state.attributes,
   productsSelected: state => state.productsSelected,
-  fieldsProd: state => state.fieldsProd
+  fieldsProd: state => state.fieldsProd,
+  test: state => state.test
 }
 
 // actions
@@ -72,7 +89,7 @@ const actions = {
       let NZ = totalQty - qty
 
       valuesList.push(['Не заполнено', NZ])
-      attributesList.push({code: key.slice(0, 9), name: key.slice(12, key.length), qty: qty, values: valuesList, percentage: percentage})
+      attributesList.push({code: key.slice(0, 9), isOpen: '', name: key.slice(12, key.length), qty: qty, values: valuesList, percentage: percentage})
     }
     vuexContext.commit('setAttributes', attributesList)
   },
