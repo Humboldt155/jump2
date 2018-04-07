@@ -111,6 +111,7 @@ export default {
       }
     },
     onLoadModel: function () {
+      this.$store.dispatch('setModelLinks', this.modelId)
       this.$store.dispatch('setProductsSelected', [])
       this.$store.commit('setAttributes', [])
       this.$store.dispatch('setModelId', this.modelId)

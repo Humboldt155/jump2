@@ -1,70 +1,24 @@
 import axios from 'axios'
 
-const urlLinks = 'http://127.0.0.1:8000/api/links/'
-const urlAttributes = 'http://127.0.0.1:8000/api/attributes/'
-const urlValues = 'http://127.0.0.1:8000/api/values/'
+const urlLinks = 'http://humboldt155.pythonanywhere.com/api/links/'
+const urlAttributes = 'http://humboldt155.pythonanywhere.com/api/attributes/'
+const urlValues = 'http://humboldt155.pythonanywhere.com/api/values/'
 
 // initial state
 const state = {
-  modelLinks: '',
-  attributesAll: {},
-  valuesAll: {}
+  attributesAll: {}
 }
 
 // mutations
 const mutations = {
   setAttributesAll (state, attributesAll) {
     state.attributesAll = attributesAll
-  },
-  setValuesAll (state, valuesAll) {
-    state.valuesAll = valuesAll
   }
-  // setModelLinks (state, modelId) {
-  //   // Запрашиваем все связи по текущей модели
-  //   axios.get(urlLinks, {
-  //     params: {
-  //       // Передаем код модели
-  //       model: modelId
-  //     }
-  //   })
-  //     .then(response => {
-  //       // Получаем ответ, все связи записываем в переменную resp
-  //       const resp = response.data
-  //       // Проходим циклом по всем связям, получаем словарь атрибутов
-  //       for (let i = 0; i < resp.length; i++) {
-  //         const attId = resp[i]['attribute']
-  //         // Обращаемся к таблице атрибутов, чтобы получить данные об атрибутах
-  //         axios.get(urlAttributes, {
-  //           params: {
-  //             id: attId
-  //           }
-  //         })
-  //           .then(response => {
-  //             const respA = response.data[0]
-  //             state.attributesAll[attId] = {
-  //               'code': respA['id'],
-  //               'is_open': respA['is_open'],
-  //               'french_name': respA['french_name'],
-  //               'english_name': respA['english_name'],
-  //               'russian_name': respA['russian_name']
-  //             }
-  //           })
-  //           .catch(e => {
-  //             this.errors.push(e)
-  //           })
-  //       }
-  //     })
-  //     .catch(e => {
-  //       this.errors.push(e)
-  //     })
-  // }
 }
 
 // getters
 const getters = {
-  modelLinks: state => state.modelLinks,
-  attributesAll: state => state.attributesAll,
-  valuesAll: state => state.valuesAll
+  attributesAll: state => state.attributesAll
 }
 
 // actions
@@ -76,7 +30,7 @@ const actions = {
     axios.get(urlLinks, {
       params: {
         // Передаем код модели
-        model: modelId
+        model: 'MOD_'.concat(modelId)
       }
     })
       .then(response => {
@@ -113,15 +67,26 @@ const actions = {
             .then(response => {
               const respA = response.data[0]
               if (attId in attList) {
-                attList[attId]['values'].push({'code': valueID, 'russian_name': valuesList[valueID]['russian_name']})
+                attList[attId]['values'].push({
+                  code: valueID,
+                  russian_name: valuesList[valueID]['russian_name'],
+                  qty: 0})
               } else {
                 attList[attId] = {
-                  'code': respA['id'],
-                  'is_open': respA['is_open'],
-                  'french_name': respA['french_name'],
-                  'english_name': respA['english_name'],
-                  'russian_name': respA['russian_name'],
-                  'values': !respA['is_open'] ? [{'code': valueID, 'russian_name': valuesList[valueID]['russian_name']}] : []
+                  code: respA['id'],
+                  is_open: respA['is_open'],
+                  french_name: respA['french_name'],
+                  english_name: respA['english_name'],
+                  russian_name: respA['russian_name'],
+                  qty: 0,
+                  percentage: 0,
+                  values: !respA['is_open'] ? [{
+                    code: valueID,
+                    french_name: valuesList[valueID]['french_name'],
+                    english_name: valuesList[valueID]['english_name'],
+                    russian_name: valuesList[valueID]['russian_name'],
+                    qty: 0
+                  }] : []
                 }
               }
             })
@@ -134,7 +99,6 @@ const actions = {
         this.errors.push(e)
       })
     vuexContext.commit('setAttributesAll', attList)
-    vuexContext.commit('setValuesAll', valuesList)
   }
 }
 
