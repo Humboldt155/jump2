@@ -2,7 +2,15 @@
   <b-container>
     <b-card sub-title="Поиск модели по названию">
       <b-row>
-        <v-autocomplete placeholder="поиск по названию" :items="items" v-model="item" :get-label="getLabel" :component-item='template' @update-items="updateItems">
+        <v-autocomplete placeholder="поиск по названию"
+                        :items="items"
+                        v-model="item"
+                        min-len='3'
+                        :get-label="getLabel"
+                        :component-item='template'
+                        keep-open="true"
+                        auto-select-one-item="true"
+                        @update-items="updateItems">
         </v-autocomplete>
         <!--<b-form-input size="sm" class="mr-sm-2" type="text" placeholder="Search"/>-->
         <router-link to="/model">
