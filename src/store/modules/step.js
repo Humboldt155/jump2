@@ -38,6 +38,15 @@ const mutations = {
         list[att].qty = attProd.length
         list[att].percentage = Math.round(attProd.length / totalQty * 100)
         list[att]['_cellVariants'].id = attProd.length > 0 ? 'light' : 'secondary'
+        for (let i = 0; i < list[att]['values'].length; i++) {
+          let name = list[att]['values'][i]['russian_name']
+          let valProd = attProd.filter(function (pV) {
+          // Применяем фильтр, чтобы исключить из списка ненужные атрибуты
+            return pV[att].toString() === name.toString()
+          })
+          list[att]['values'][i]['qty'] = valProd.length
+          console.log(list[att]['values'][i]['qty'])
+        }
         state.attributesArray.push(list[att])
       }
     }
