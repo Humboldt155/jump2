@@ -38,7 +38,6 @@ const mutations = {
         list[att].qty = attProd.length
         list[att].percentage = Math.round(attProd.length / totalQty * 100)
         list[att]['_cellVariants'].id = attProd.length > 0 ? 'light' : 'secondary'
-        console.log(list[att].qty)
         state.attributesArray.push(list[att])
       }
     }
@@ -99,8 +98,12 @@ const actions = {
               if (attId in attList) {
                 attList[attId]['values'].push({
                   id: valueID,
+                  french_name: valuesList[valueID]['french_name'],
+                  english_name: valuesList[valueID]['english_name'],
                   russian_name: valuesList[valueID]['russian_name'],
-                  qty: 0})
+                  qty: 0,
+                  products: []
+                })
               } else {
                 attList[attId] = {
                   id: respA['id'],
