@@ -15,10 +15,11 @@ const mutations = {
   setAttributesAll (state, attributesAll) {
     state.attributesAll = attributesAll
   },
-  setAttributesArray (state, product) {
+  setAttributesArray (state, products) {
     const list = state.attributesAll
     for (let att in list) {
       if (list.hasOwnProperty(att)) {
+        
         console.log(list[att])
         state.attributesArray.push(list[att])
       }
@@ -85,18 +86,20 @@ const actions = {
               } else {
                 attList[attId] = {
                   id: respA['id'],
-                  is_open: respA['is_open'],
+                  is_open: respA['is_open'] ? 'открытый' : 'закрытый',
                   french_name: respA['french_name'],
                   english_name: respA['english_name'],
                   russian_name: respA['russian_name'],
                   qty: 0,
                   percentage: 0,
+                  _cellVariants: {is_open: respA['is_open'] ? 'light' : 'secondary'},
                   values: !respA['is_open'] ? [{
                     id: valueID,
                     french_name: valuesList[valueID]['french_name'],
                     english_name: valuesList[valueID]['english_name'],
                     russian_name: valuesList[valueID]['russian_name'],
-                    qty: 0
+                    qty: 0,
+                    products: []
                   }] : []
                 }
               }

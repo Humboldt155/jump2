@@ -76,11 +76,11 @@ export default {
     return {
       fieldsAtt: [
         {key: 'id', label: 'Код атрибута', sortable: true},
-        {key: 'is_open', label: 'Тип', sortable: true},
         {key: 'russian_name', label: 'Наименование атрибута', sortable: true},
         {key: 'qty', label: 'Заполнено, шт.', sortable: true},
         {key: 'percentage', label: 'Заполнено, %', sortable: true},
-        {key: 'values', label: 'Значения'}
+        {key: 'values', label: 'Значения'},
+        {key: 'is_open', label: 'Тип', sortable: true}
       ],
       fieldsVal: [
         {key: 'id', label: 'Код', sortable: true},
