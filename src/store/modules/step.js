@@ -79,7 +79,7 @@ const actions = {
               const respA = response.data[0]
               if (attId in attList) {
                 attList[attId]['values'].push({
-                  code: valueID,
+                  id: valueID,
                   russian_name: valuesList[valueID]['russian_name'],
                   qty: 0})
               } else {
