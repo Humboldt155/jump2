@@ -13,47 +13,55 @@
         <template slot="table-caption">
           <b-btn size="sm" variant="info" @click="onLoadAttributes">ПОКАЗАТЬ ВСЕ АТРИБУТЫ</b-btn>
         </template>
-        <!--<template slot="values" slot-scope="row">-->
-          <!--<b-button size="sm" @click.stop="row.toggleDetails" class="mr-2" variant="outline-secondary">-->
-            <!--значения {{ row.detailsShowing ? '-' : '+'}}-->
-          <!--</b-button>-->
-        <!--</template>-->
-        <!--<template slot="row-details" slot-scope="row">-->
-          <!--<b-card tag="article" style="max-width: 60rem" class="mb-2">-->
-            <!--<b-container fluid>-->
-              <!--<h5>{{ row.item.name }}</h5>-->
-              <!--<b-row>-->
-                <!--<b-col>-->
-                  <!--<h6>Значения:</h6>-->
-                <!--</b-col>-->
-                <!--<b-col  cols="2">-->
-                  <!--<h6>Количество артикулов</h6>-->
-                <!--</b-col>-->
-                <!--<b-col>-->
-                  <!--<h6>Список</h6>-->
-                <!--</b-col>-->
-              <!--</b-row >-->
-              <!--<b-row v-for="value in row.item['values']" :key="value">-->
-                <!--<b-col>-->
-                  <!--{{ value[0] }}-->
-                <!--</b-col>-->
-                <!--<b-col  cols="2">-->
-                  <!--{{ value[1] }}-->
-                <!--</b-col>-->
-                <!--<b-col>-->
-                  <!--<b-button v-if="value[0]==='Не заполнено'" size="sm" @click="onCreateProductsList(value[0], row.item.code.concat(' - ', row.item.name))" variant="outline-secondary">-->
-                    <!--список артикулов-->
-                  <!--</b-button>-->
-                  <!--<b-button v-else size="sm" @click="onCreateProductsList(value[0], row.item.code.concat(' - ', row.item.name))" variant="outline-info">-->
-                    <!--список артикулов-->
-                  <!--</b-button>-->
-                <!--</b-col>-->
-              <!--</b-row>-->
-            <!--</b-container>-->
-          <!--</b-card>-->
-        <!--</template>-->
+        <template slot="values" slot-scope="row">
+          <b-button size="sm" @click.stop="row.toggleDetails" class="mr-2" variant="outline-secondary">
+            значения {{ row.detailsShowing ? '-' : '+'}}
+          </b-button>
+        </template>
+        <template slot="row-details" slot-scope="row">
+          <b-card tag="article" style="max-width: 60rem" class="mb-2">
+            <b-container fluid>
+              <h5>{{ row.item.id }} - {{ row.item.russian_name }}</h5>
+              <b-row>
+                <b-col cols="2">
+                  <h6>Код</h6>
+                </b-col>
+                <b-col>
+                  <h6>Значение</h6>
+                </b-col>
+                <b-col  cols="2">
+                  <h6>Артикулы</h6>
+                </b-col>
+                <b-col>
+                  <h6>Список артикулов</h6>
+                </b-col>
+                <b-col>
+                  <h6>Связи</h6>
+                </b-col>
+              </b-row >
+              <b-row v-for="value in row.item['values']" :key="value">
+                <b-col  cols="2">
+                  {{ value.id }}
+                </b-col>
+                <b-col>
+                  {{ value.russian_name }}
+                </b-col>
+                <b-col  cols="2">
+                  {{ value.qty }}
+                </b-col>
+                <b-col>
+                  <b-button v-if="value[0]==='Не заполнено'" size="sm" @click="onCreateProductsList(value[0], row.item.code.concat(' - ', row.item.name))" variant="outline-secondary">
+                    список артикулов
+                  </b-button>
+                  <b-button v-else size="sm" @click="onCreateProductsList(value[0], row.item.code.concat(' - ', row.item.name))" variant="outline-info">
+                    список артикулов
+                  </b-button>
+                </b-col>
+              </b-row>
+            </b-container>
+          </b-card>
+        </template>
     </b-table>
-
     <!--список артикулов-->
     <!--<b-table-->
       <!--bordered-->
@@ -110,8 +118,8 @@ export default {
   },
   methods: {
     onLoadAttributes () {
-      this.$store.dispatch('setAttributes', this.$store.getters.products, this.$store.getters.attributesAll)
-      this.attributes = this.$store.getters.attributes
+      this.$store.commit('setAttributesArray', this.$store.getters.products)
+      this.attributes = this.$store.getters.attributesArray
     }
     // onCreateProductsList (val, att) {
     //   this.att = att
@@ -143,7 +151,7 @@ export default {
       return this.$store.getters.modelAdeo
     },
     attributes () {
-      return this.$store.getters.attributes
+      return this.$store.getters.attributesArray
     },
     productsQty () {
       return this.$store.getters.productsQty

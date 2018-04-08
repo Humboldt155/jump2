@@ -6,19 +6,30 @@ const urlValues = 'http://humboldt155.pythonanywhere.com/api/values/'
 
 // initial state
 const state = {
-  attributesAll: {}
+  attributesAll: {},
+  attributesArray: []
 }
 
 // mutations
 const mutations = {
   setAttributesAll (state, attributesAll) {
     state.attributesAll = attributesAll
+  },
+  setAttributesArray (state, product) {
+    const list = state.attributesAll
+    for (let att in list) {
+      if (list.hasOwnProperty(att)) {
+        console.log(list[att])
+        state.attributesArray.push(list[att])
+      }
+    }
   }
 }
 
 // getters
 const getters = {
-  attributesAll: state => state.attributesAll
+  attributesAll: state => state.attributesAll,
+  attributesArray: state => state.attributesArray
 }
 
 // actions
@@ -49,7 +60,7 @@ const actions = {
             .then(response => {
               const respV = response.data[0]
               valuesList[valueID] = {
-                'code': respV['id'],
+                'id': respV['id'],
                 'french_name': respV['french_name'],
                 'english_name': respV['english_name'],
                 'russian_name': respV['russian_name']
@@ -73,7 +84,7 @@ const actions = {
                   qty: 0})
               } else {
                 attList[attId] = {
-                  code: respA['id'],
+                  id: respA['id'],
                   is_open: respA['is_open'],
                   french_name: respA['french_name'],
                   english_name: respA['english_name'],
@@ -81,7 +92,7 @@ const actions = {
                   qty: 0,
                   percentage: 0,
                   values: !respA['is_open'] ? [{
-                    code: valueID,
+                    id: valueID,
                     french_name: valuesList[valueID]['french_name'],
                     english_name: valuesList[valueID]['english_name'],
                     russian_name: valuesList[valueID]['russian_name'],

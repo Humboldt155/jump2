@@ -59,13 +59,10 @@
         </b-row>
     </b-container>
     </b-card>
-    {{valuesAll}}
   </b-container>
 </template>
 
 <script>
-
-import axios from 'axios'
 
 export default {
   name: 'step',
@@ -80,35 +77,6 @@ export default {
     }
   },
   methods: {
-    onLoadAttribute () {
-      axios.get('http://humboldt155.pythonanywhere.com/api/attributes/', {
-        params: {
-          id: this.attribute
-        }
-      })
-        .then(response => {
-          this.attributeInfo = response.data
-        })
-        .catch(e => {
-          this.errors.push(e)
-        })
-    },
-    setModelLinks () {
-      this.$store.dispatch('setModelLinks', this.modelId)
-    },
-    onLoadModel () {
-      axios.get('http://humboldt155.pythonanywhere.com/api/attributes/', {
-        params: {
-          id: this.attribute
-        }
-      })
-        .then(response => {
-          this.attributeInfo = response.data[0]
-        })
-        .catch(e => {
-          this.errors.push(e)
-        })
-    }
   },
   computed: {
     modelLinks () {
