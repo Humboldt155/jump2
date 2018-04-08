@@ -1,4 +1,3 @@
-import axios from 'axios'
 // initial state
 const state = {
   attributes: [],
@@ -26,8 +25,7 @@ const mutations = {
 const getters = {
   attributes: state => state.attributes,
   productsSelected: state => state.productsSelected,
-  fieldsProd: state => state.fieldsProd,
-  test: state => state.test
+  fieldsProd: state => state.fieldsProd
 }
 
 // actions

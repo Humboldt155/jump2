@@ -84,8 +84,7 @@ export default {
       return this.$store.getters.columns
     },
     file_name () {
-      let model = this.$store.getters.modelAdeo
-      return model.russian_name.concat('.xls')
+      return this.$store.getters.fileName
     }
   }
 }

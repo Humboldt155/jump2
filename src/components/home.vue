@@ -16,10 +16,10 @@
 <script>
 export default {
   name: 'home',
-  mounted() {
+  mounted () {
     this.$store.dispatch('setAllModels')
   },
-  computed() {
+  computed () {
     this.$store.dispatch('setAllModels')
   }
 }

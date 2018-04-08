@@ -70,7 +70,6 @@
 
 <script>
 
-import axios from 'axios'
 import SearchTemplate from './model/SearchTemplate.vue'
 
 import AnalogsComponent from './model/analogs'
@@ -144,9 +143,6 @@ export default {
     },
     productsQty () {
       return this.$store.getters.productsQty
-    },
-    setAllModels () {
-      this.$store.dispatch('setAllModels')
     }
   },
   components: {

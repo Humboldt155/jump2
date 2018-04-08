@@ -17,7 +17,6 @@ const state = {
   productsQty: {total: 0, description: 0, noDescriptionAvs: 0},
   totalCount: 0,
   isLoaded: false,
-  test: [],
   isLoadAvs: true
 }
 
@@ -33,10 +32,6 @@ const mutations = {
   },
   setTotalCount (state, totalCount) {
     state.totalCount = totalCount
-    // Вставляем пустые значения по тем артикулам, которые не заполнен
-  },
-  setTest (state, test) {
-    state.totalCount = test
     // Вставляем пустые значения по тем артикулам, которые не заполнен
   },
   setColumns (state, columns) {
@@ -60,7 +55,6 @@ const getters = {
   fields: state => state.fields,
   productsQty: state => state.productsQty,
   totalCount: state => state.totalCount,
-  test: state => state.test,
   isLoaded: state => state.isLoaded,
   isLoadAvs: state => state.isLoadAvs
 }

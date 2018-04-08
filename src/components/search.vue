@@ -64,9 +64,6 @@ export default {
     }
   },
   computed: {
-    setAllModels () {
-      this.$store.dispatch('setAllModels')
-    },
     modelId () {
       return this.$store.getters.modelId
     }

@@ -6,6 +6,7 @@ const state = {
   modelAdeo: {},
   allModels: [],
   modelGroup: {},
+  fileName: '',
   modelGroups: {},
   modelsList: [],
   subDepartment: {}
@@ -25,6 +26,9 @@ const mutations = {
   },
   setModelsList (state, modelsList) {
     state.modelsList = modelsList
+  },
+  setFileName (state, fileName) {
+    state.fileName = fileName
   }
 }
 
@@ -33,7 +37,8 @@ const getters = {
   modelId: state => state.modelId,
   modelAdeo: state => state.modelAdeo,
   allModels: state => state.allModels,
-  modelsList: state => state.modelsList
+  modelsList: state => state.modelsList,
+  fileName: state => state.fileName
 }
 
 // actions
@@ -51,6 +56,7 @@ const actions = {
       .then(response => {
         // Получаем все данные о текущей модели
         vuexContext.commit('setModelAdeo', response.data[0])
+        vuexContext.commit('setFileName', response.data[0]['russian_name'].concat('.xls'))
 
         // Получаем код группы моделей
         const modelGroupId = response.data[0].model_group_adeo
