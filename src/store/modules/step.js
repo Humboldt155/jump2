@@ -16,11 +16,29 @@ const mutations = {
     state.attributesAll = attributesAll
   },
   setAttributesArray (state, products) {
+    const totalQty = products.length
+
+    for (let i = 0; i < totalQty; i++) {
+      let p = products[i]
+      for (let a in p) {
+        if (p.hasOwnProperty(a)) {
+          p[a.slice(0, 9)] = p[a]
+        }
+      }
+      products[i] = p
+    }
+
     const list = state.attributesAll
     for (let att in list) {
       if (list.hasOwnProperty(att)) {
-        
-        console.log(list[att])
+        let attProd = products.filter(function (p) {
+          // Применяем фильтр, чтобы исключить из списка ненужные атрибуты
+          return p[att] !== '' && p.hasOwnProperty(att)
+        })
+        list[att].qty = attProd.length
+        list[att].percentage = Math.round(attProd.length / totalQty * 100)
+        list[att]['_cellVariants'].id = attProd.length > 0 ? 'light' : 'secondary'
+        console.log(list[att].qty)
         state.attributesArray.push(list[att])
       }
     }
@@ -92,7 +110,7 @@ const actions = {
                   russian_name: respA['russian_name'],
                   qty: 0,
                   percentage: 0,
-                  _cellVariants: {is_open: respA['is_open'] ? 'light' : 'secondary'},
+                  _cellVariants: {is_open: respA['is_open'] ? 'light' : 'secondary', id: 'secondary'},
                   values: !respA['is_open'] ? [{
                     id: valueID,
                     french_name: valuesList[valueID]['french_name'],

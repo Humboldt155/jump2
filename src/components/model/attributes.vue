@@ -2,6 +2,8 @@
   <b-container fluid>
     <p></p><br>
         <b-table
+          sort-by="qty"
+          sort-desc="true"
           bordered
           responsive
           hover
@@ -21,7 +23,15 @@
         <template slot="row-details" slot-scope="row">
           <b-card tag="article" style="max-width: 60rem" class="mb-2">
             <b-container fluid>
-              <h5>{{ row.item.id }} - {{ row.item.russian_name }}</h5>
+              <b-row>
+                <b-col cols="8">
+                  <h5>{{ row.item.id }} - {{ row.item.russian_name }}</h5>
+                  <p><b-badge variant="light">fra</b-badge> - {{ row.item.french_name }}<br>
+                  <b-badge variant="light">eng</b-badge> - {{ row.item.english_name }}</p>
+                </b-col>
+                <b-col>
+                </b-col>
+              </b-row>
               <b-table
                 bordered
                 responsive
@@ -80,7 +90,8 @@ export default {
         {key: 'qty', label: 'Заполнено, шт.', sortable: true},
         {key: 'percentage', label: 'Заполнено, %', sortable: true},
         {key: 'values', label: 'Значения'},
-        {key: 'is_open', label: 'Тип', sortable: true}
+        {key: 'is_open', label: 'Тип', sortable: true},
+        {key: 'links', label: 'Связи', sortable: true}
       ],
       fieldsVal: [
         {key: 'id', label: 'Код', sortable: true},
