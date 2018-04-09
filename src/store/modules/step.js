@@ -7,13 +7,29 @@ const urlValues = 'http://humboldt155.pythonanywhere.com/api/values/'
 // initial state
 const state = {
   attributesAll: {},
-  attributesArray: []
+  attributesArray: [],
+  attributeLinks: [],
+  valueLinks: []
 }
 
 // mutations
 const mutations = {
   setAttributesAll (state, attributesAll) {
     state.attributesAll = attributesAll
+  },
+  setAttributeLinks (state, attId) {
+    axios.get(urlLinks, {
+      params: {
+        attribute: attId
+      }
+    })
+      .then(response => {
+        const resp = response.data
+        console.log(resp)
+      })
+      .catch(e => {
+        this.errors.push(e)
+      })
   },
   setValues (state, att) {
     let values = state.attributesAll[att]['values']
@@ -84,6 +100,8 @@ const mutations = {
 // getters
 const getters = {
   attributesAll: state => state.attributesAll,
+  attributeLinks: state => state.attributeLinks,
+  valueLinks: state => state.valueLinks,
   attributesArray: state => state.attributesArray
 }
 
@@ -92,7 +110,6 @@ const actions = {
   setModelLinks (vuexContext, modelId) {
     // Запрашиваем все связи по текущей модели
     let attList = {}
-    let valuesList = {}
     axios.get(urlLinks, {
       params: {
         // Передаем код модели

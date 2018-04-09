@@ -3,7 +3,7 @@
     <p></p><br>
         <b-table
           sort-by="qty"
-          sort-desc="true"
+          :sort-desc="sortDesc"
           bordered
           responsive
           hover
@@ -18,6 +18,11 @@
         <template slot="values" slot-scope="row">
           <b-button size="sm" @click.stop="row.toggleDetails" @click="onLoadValues(row.item.id)" class="mr-2" variant="outline-secondary">
             значения {{ row.detailsShowing ? '-' : '+'}}
+          </b-button>
+        </template>
+        <template slot="links" slot-scope="row">
+          <b-button size="sm" @click="onLoadValuesLinks(row.item.id)" class="mr-2" variant="outline-info">
+            links
           </b-button>
         </template>
         <template slot="row-details" slot-scope="row">
@@ -84,6 +89,7 @@ export default {
   name: 'attributes',
   data () {
     return {
+      sortDesc: true,
       fieldsAtt: [
         {key: 'id', label: 'Код атрибута', sortable: true},
         {key: 'russian_name', label: 'Наименование атрибута', sortable: true},
@@ -114,6 +120,9 @@ export default {
     },
     onLoadValues (att) {
       this.$store.commit('setValues', att)
+    },
+    onLoadValuesLinks (attId) {
+      this.$store.commit('setAttributeLinks', attId)
     }
     // onCreateProductsList (val, att) {
     //   this.att = att
@@ -152,6 +161,9 @@ export default {
     },
     productsSelected () {
       return this.$store.getters.productsSelected
+    },
+    attributeLinks () {
+      return this.$store.getters.attributeLinks
     }
   }
 }

@@ -3,7 +3,7 @@ import axios from 'axios'
 // initial state
 const state = {
   modelId: '',
-  modelAdeo: {},
+  modelAdeo: {'model_group_adeo': ''},
   allModels: [],
   modelGroup: {},
   fileName: '',
