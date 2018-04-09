@@ -16,7 +16,7 @@
           <b-btn size="sm" variant="info" @click="onLoadAttributes">ПОКАЗАТЬ ВСЕ АТРИБУТЫ</b-btn>
         </template>
         <template slot="values" slot-scope="row">
-          <b-button size="sm" @click.stop="row.toggleDetails" class="mr-2" variant="outline-secondary">
+          <b-button size="sm" @click.stop="row.toggleDetails" @click="onLoadValues(row.item.id)" class="mr-2" variant="outline-secondary">
             значения {{ row.detailsShowing ? '-' : '+'}}
           </b-button>
         </template>
@@ -111,6 +111,9 @@ export default {
     onLoadAttributes () {
       this.$store.commit('setAttributesArray', this.$store.getters.products)
       this.attributes = this.$store.getters.attributesArray
+    },
+    onLoadValues (att) {
+      this.$store.commit('setValues', att)
     }
     // onCreateProductsList (val, att) {
     //   this.att = att

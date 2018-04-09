@@ -15,7 +15,35 @@ const mutations = {
   setAttributesAll (state, attributesAll) {
     state.attributesAll = attributesAll
   },
+  setValues (state, att) {
+    let values = state.attributesAll[att]['values']
+    for (let i = 0; i < values.length; i++) {
+      let valueID = values[i].id
+      // Обращаемся к таблице значений, чтобы получить данные о значениях
+      axios.get(urlValues, {
+        params: {
+          id: valueID
+        }
+      })
+        .then(response => {
+          const respV = response.data[0]
+          state.attributesAll[att]['values'][i]['id'] = respV['id']
+          state.attributesAll[att]['values'][i]['french_name'] = respV['french_name']
+          state.attributesAll[att]['values'][i]['english_name'] = respV['english_name']
+          state.attributesAll[att]['values'][i]['russian_name'] = respV['russian_name']
+          let name = respV['russian_name']
+          let valProd = attProd.filter(function (pV) {
+            return pV[att].toString() === name.toString()
+          })
+          state.attributesAll[att]['values'][i]['qty'] = valProd.length > 0 ? valProd.length : 0
+        })
+        .catch(e => {
+          this.errors.push(e)
+        })
+    }
+  },
   setAttributesArray (state, products) {
+    state.attributesArray = []
     const totalQty = products.length
 
     for (let i = 0; i < totalQty; i++) {
@@ -35,18 +63,18 @@ const mutations = {
           // Применяем фильтр, чтобы исключить из списка ненужные атрибуты
           return p[att] !== '' && p.hasOwnProperty(att)
         })
-        list[att].qty = attProd.length
-        list[att].percentage = Math.round(attProd.length / totalQty * 100)
+        list[att].qty = attProd.length > 0 ? attProd.length : ''
+        list[att].percentage = attProd.length > 0 ? Math.round(attProd.length / totalQty * 100) : ''
         list[att]['_cellVariants'].id = attProd.length > 0 ? 'light' : 'secondary'
-        for (let i = 0; i < list[att]['values'].length; i++) {
-          let name = list[att]['values'][i]['russian_name']
-          let valProd = attProd.filter(function (pV) {
-          // Применяем фильтр, чтобы исключить из списка ненужные атрибуты
-            return pV[att].toString() === name.toString()
-          })
-          list[att]['values'][i]['qty'] = valProd.length
-          console.log(list[att]['values'][i]['qty'])
-        }
+        // for (let i = 0; i < list[att]['values'].length; i++) {
+        //   let name = list[att]['values'][i]['russian_name']
+        //   let valProd = attProd.filter(function (pV) {
+        //   // Применяем фильтр, чтобы исключить из списка ненужные значения
+        //     return pV[att].toString() === name.toString()
+        //   })
+        //   list[att]['values'][i]['qty'] = valProd.length > 0
+        //   console.log(list[att]['values'][i]['qty'])
+        // }
         state.attributesArray.push(list[att])
       }
     }
@@ -79,23 +107,23 @@ const actions = {
           const attId = resp[i]['attribute']
           const valueID = resp[i]['value']
           // Обращаемся к таблице значений, чтобы получить данные о значениях
-          axios.get(urlValues, {
-            params: {
-              id: valueID
-            }
-          })
-            .then(response => {
-              const respV = response.data[0]
-              valuesList[valueID] = {
-                'id': respV['id'],
-                'french_name': respV['french_name'],
-                'english_name': respV['english_name'],
-                'russian_name': respV['russian_name']
-              }
-            })
-            .catch(e => {
-              this.errors.push(e)
-            })
+          // axios.get(urlValues, {
+          //   params: {
+          //     id: valueID
+          //   }
+          // })
+          //   .then(response => {
+          //     const respV = response.data[0]
+          //     valuesList[valueID] = {
+          //       'id': respV['id'],
+          //       'french_name': respV['french_name'],
+          //       'english_name': respV['english_name'],
+          //       'russian_name': respV['russian_name']
+          //     }
+          //   })
+          //   .catch(e => {
+          //     this.errors.push(e)
+          //   })
           // Обращаемся к таблице атрибутов, чтобы получить данные об атрибутах
           axios.get(urlAttributes, {
             params: {
@@ -107,9 +135,9 @@ const actions = {
               if (attId in attList) {
                 attList[attId]['values'].push({
                   id: valueID,
-                  french_name: valuesList[valueID]['french_name'],
-                  english_name: valuesList[valueID]['english_name'],
-                  russian_name: valuesList[valueID]['russian_name'],
+                  french_name: '',
+                  english_name: '',
+                  russian_name: '',
                   qty: 0,
                   products: []
                 })
@@ -125,9 +153,9 @@ const actions = {
                   _cellVariants: {is_open: respA['is_open'] ? 'light' : 'secondary', id: 'secondary'},
                   values: !respA['is_open'] ? [{
                     id: valueID,
-                    french_name: valuesList[valueID]['french_name'],
-                    english_name: valuesList[valueID]['english_name'],
-                    russian_name: valuesList[valueID]['russian_name'],
+                    french_name: '',
+                    english_name: '',
+                    russian_name: '',
                     qty: 0,
                     products: []
                   }] : []
