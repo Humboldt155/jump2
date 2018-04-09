@@ -8,7 +8,7 @@ const state = {
   modelGroup: {},
   fileName: '',
   modelGroups: {},
-  modelsList: [],
+  modelsList: {id: '', list: []},
   subDepartment: {}
 
 }
@@ -65,7 +65,7 @@ const actions = {
 
         // В этой переменной будем хранить всю инфомрацию о текущем подотделе
         let subDepartment = {}
-        let modelsList = []
+        let modelsList = {id: '', list: []}
         // Получить группу, в которой находится текущая модель
         axios.get('http://humboldt155.pythonanywhere.com/api/sub_departments_adeo/', {
           params: {
@@ -74,8 +74,7 @@ const actions = {
         })
           .then(response => {
             subDepartment = response.data[0]
-            modelsList.push(subDepartment.name)
-            modelsList.push([])
+            modelsList.id = subDepartment.name
           })
           .catch(e => {
             this.errors.push(e)
@@ -101,7 +100,7 @@ const actions = {
               })
                 .then(response => {
                   models = response.data
-                  modelsList[1].push([mgName, models])
+                  modelsList.list.push({id: mgName, list: models})
                 })
                 .catch(e => {
                   this.errors.push(e)

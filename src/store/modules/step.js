@@ -51,7 +51,22 @@ const mutations = {
       })
   },
   setValues (state, att) {
-    if (state.attributesAll[att]['values']['is_open']) {
+    if (state.attributesAll[att]['is_open'] === 'открытый') {
+      let valuesDict = {}
+      for (let i = 0; i < state.attProd.length; i++) {
+        let value = state.attProd[i][att]
+        if (value in valuesDict) {
+          valuesDict[value].qty = valuesDict[value].qty + 1
+          valuesDict[value].products.push(state.attProd[i]['Код продукта'])
+        } else {
+          valuesDict[value] = {russian_name: value, qty: 1, id: '-', products: [state.attProd[i]['Код продукта']]}
+        }
+      }
+      for (let value in valuesDict) {
+        if (valuesDict.hasOwnProperty(value)) {
+          state.attributesAll[att]['values'].push(valuesDict[value])
+        }
+      }
     } else {
       let values = state.attributesAll[att]['values']
       for (let i = 0; i < values.length; i++) {
