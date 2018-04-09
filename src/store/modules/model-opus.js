@@ -86,6 +86,7 @@ const actions = {
       }
     })
       .then(response => {
+        console.log(response.data)
         vuexContext.commit('setTotalCount', response.data.totalCount)
       })
       .catch(e => {

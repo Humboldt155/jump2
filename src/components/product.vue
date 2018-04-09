@@ -60,6 +60,8 @@ export default {
       this.$store.dispatch('setProductsSelected', [])
       this.$store.commit('setAttributes', [])
       this.$store.dispatch('setModelId', id)
+      this.$store.commit('setAttributes', [])
+      this.$store.commit('emptyAttributesArray')
       this.$store.dispatch('setProducts', id)
       this.$store.dispatch('setModelAdeo', id)
       const mg = this.$store.getters.modelGroup

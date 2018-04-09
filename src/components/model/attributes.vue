@@ -17,35 +17,50 @@
         </template>
         <template slot="values" slot-scope="row">
           <b-button size="sm" @click.stop="row.toggleDetails" @click="onLoadValues(row.item.id)" class="mr-2" variant="outline-secondary">
-            значения {{ row.detailsShowing ? '-' : '+'}}
-          </b-button>
-        </template>
-        <template slot="links" slot-scope="row">
-          <b-button size="sm" @click="onLoadValuesLinks(row.item.id)" class="mr-2" variant="outline-info">
-            links
+            детали {{ row.detailsShowing ? '-' : '+'}}
           </b-button>
         </template>
         <template slot="row-details" slot-scope="row">
           <b-card tag="article" style="max-width: 60rem" class="mb-2">
             <b-container fluid>
               <b-row>
-                <b-col cols="8">
+                <b-col>
                   <h5>{{ row.item.id }} - {{ row.item.russian_name }}</h5>
                   <p><b-badge variant="light">fra</b-badge> - {{ row.item.french_name }}<br>
                   <b-badge variant="light">eng</b-badge> - {{ row.item.english_name }}</p>
                 </b-col>
+              </b-row>
+              <b-row>
                 <b-col>
+                  <b-btn v-b-toggle="'collapse2'" size="sm" @click="onLoadAttLinks(row.item.id)" class="mr-2" variant="outline-info">показать связи</b-btn>
+                    <b-collapse id="collapse2">
+                      <b-card>
+                        {{ (currentAtt === row.item.id) ? attributeLinks : '' }}
+                      </b-card>
+                    </b-collapse>
                 </b-col>
               </b-row>
-              <b-table
-                bordered
-                responsive
-                hover
-                small
-                caption-top
-                :items="row.item.values"
-                :fields="fieldsVal"
-              ></b-table>
+              <b-row>
+                <b-col>
+                  <b-table
+                    sort-by="qty"
+                    :sort-desc="sortDesc"
+                    bordered
+                    responsive
+                    hover
+                    small
+                    caption-top
+                    :items="row.item.values"
+                    :fields="fieldsVal"
+                  >
+                    <template slot="products">
+                      <b-button size="sm" @click="setSelectedProducts(row.item.id.values)" class="mr-2" variant="outline-secondary">
+                        список
+                      </b-button>
+                    </template>
+                  </b-table>
+                </b-col>
+              </b-row>
             </b-container>
           </b-card>
         </template>
@@ -90,21 +105,20 @@ export default {
   data () {
     return {
       sortDesc: true,
+      currentAtt: '',
       fieldsAtt: [
         {key: 'id', label: 'Код атрибута', sortable: true},
         {key: 'russian_name', label: 'Наименование атрибута', sortable: true},
         {key: 'qty', label: 'Заполнено, шт.', sortable: true},
         {key: 'percentage', label: 'Заполнено, %', sortable: true},
         {key: 'values', label: 'Значения'},
-        {key: 'is_open', label: 'Тип', sortable: true},
-        {key: 'links', label: 'Связи', sortable: true}
+        {key: 'is_open', label: 'Тип', sortable: true}
       ],
       fieldsVal: [
         {key: 'id', label: 'Код', sortable: true},
         {key: 'russian_name', label: 'Значение', sortable: true},
         {key: 'qty', label: 'Артикулы(шт)', sortable: true},
-        {key: 'products', label: 'Список'},
-        {key: 'links', label: 'Связи'}
+        {key: 'products', label: 'Список'}
       ],
       // att: '',
       // val: '',
@@ -115,39 +129,18 @@ export default {
   },
   methods: {
     onLoadAttributes () {
+      this.$store.commit('setAttProducts', this.$store.getters.products)
       this.$store.commit('setAttributesArray', this.$store.getters.products)
       this.attributes = this.$store.getters.attributesArray
     },
-    onLoadValues (att) {
-      this.$store.commit('setValues', att)
+    onLoadValues (attId) {
+      this.$store.commit('setAttProd', attId)
+      this.$store.commit('setValues', attId)
     },
-    onLoadValuesLinks (attId) {
+    onLoadAttLinks (attId) {
+      this.currentAtt = attId
       this.$store.commit('setAttributeLinks', attId)
     }
-    // onCreateProductsList (val, att) {
-    //   this.att = att
-    //   this.val = val
-    //   let productsSelected = []
-    //   let columns = {
-    //     'Код продукта': 'Код продукта',
-    //     'ATT_12963 - Название на сайте': 'ATT_12963 - Название на сайте'
-    //   }
-    //   columns[att] = att
-    //   this.columns = columns
-    //
-    //   this.file_name = att.concat('.xls')
-    //
-    //   if (val === 'Не заполнено') {
-    //     productsSelected = this.$store.getters.products.filter(function (el) {
-    //       return el[att] === ''
-    //     })
-    //   } else {
-    //     productsSelected = this.$store.getters.products.filter(function (el) {
-    //       return el[att] === val
-    //     })
-    //   }
-    //   this.$store.dispatch('setProductsSelected', productsSelected)
-    // }
   },
   computed: {
     modelAdeo () {

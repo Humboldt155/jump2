@@ -49,7 +49,7 @@
 
 <script>
 export default {
-  name: 'table',
+  name: 'productsTable',
   data () {
     return {
       currentPage: 1,

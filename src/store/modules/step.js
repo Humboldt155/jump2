@@ -8,12 +8,27 @@ const urlValues = 'http://humboldt155.pythonanywhere.com/api/values/'
 const state = {
   attributesAll: {},
   attributesArray: [],
-  attributeLinks: [],
-  valueLinks: []
+  attributeLinks: {},
+  valueLinks: [],
+  attProducts: [],
+  attProd: []
 }
 
 // mutations
 const mutations = {
+  emptyAttributesArray (state) {
+    state.attributesArray = []
+  },
+  setAttProd (state, attId) {
+    let attProd = state.attProducts.filter(function (p) {
+      // Применяем фильтр, чтобы исключить из списка ненужные атрибуты
+      return p[attId] !== '' && p.hasOwnProperty(attId)
+    })
+    state.attProd = attProd
+  },
+  setAttProducts (state, products) {
+    state.attProducts = products
+  },
   setAttributesAll (state, attributesAll) {
     state.attributesAll = attributesAll
   },
@@ -25,37 +40,44 @@ const mutations = {
     })
       .then(response => {
         const resp = response.data
-        console.log(resp)
+        state.attributeLinks = {}
+        for (let i = 0; i < resp.length; i++) {
+          let model = resp[i]['model']
+          state.attributeLinks[model] = resp[i]['value']
+        }
       })
       .catch(e => {
         this.errors.push(e)
       })
   },
   setValues (state, att) {
-    let values = state.attributesAll[att]['values']
-    for (let i = 0; i < values.length; i++) {
-      let valueID = values[i].id
-      // Обращаемся к таблице значений, чтобы получить данные о значениях
-      axios.get(urlValues, {
-        params: {
-          id: valueID
-        }
-      })
-        .then(response => {
-          const respV = response.data[0]
-          state.attributesAll[att]['values'][i]['id'] = respV['id']
-          state.attributesAll[att]['values'][i]['french_name'] = respV['french_name']
-          state.attributesAll[att]['values'][i]['english_name'] = respV['english_name']
-          state.attributesAll[att]['values'][i]['russian_name'] = respV['russian_name']
-          let name = respV['russian_name']
-          let valProd = attProd.filter(function (pV) {
-            return pV[att].toString() === name.toString()
+    if (state.attributesAll[att]['values']['is_open']) {
+    } else {
+      let values = state.attributesAll[att]['values']
+      for (let i = 0; i < values.length; i++) {
+        let valueID = values[i].id
+        // Обращаемся к таблице значений, чтобы получить данные о значениях
+        axios.get(urlValues, {
+          params: {
+            id: valueID
+          }
+        })
+          .then(response => {
+            const respV = response.data[0]
+            state.attributesAll[att]['values'][i]['id'] = respV['id']
+            state.attributesAll[att]['values'][i]['french_name'] = respV['french_name']
+            state.attributesAll[att]['values'][i]['english_name'] = respV['english_name']
+            state.attributesAll[att]['values'][i]['russian_name'] = respV['russian_name']
+            let name = respV['russian_name']
+            let valProd = state.attProd.filter(function (pV) {
+              return pV[att].toString() === name.toString()
+            })
+            state.attributesAll[att]['values'][i]['qty'] = valProd.length > 0 ? valProd.length : ''
           })
-          state.attributesAll[att]['values'][i]['qty'] = valProd.length > 0 ? valProd.length : 0
-        })
-        .catch(e => {
-          this.errors.push(e)
-        })
+          .catch(e => {
+            this.errors.push(e)
+          })
+      }
     }
   },
   setAttributesArray (state, products) {
@@ -101,6 +123,7 @@ const mutations = {
 const getters = {
   attributesAll: state => state.attributesAll,
   attributeLinks: state => state.attributeLinks,
+  attProd: state => state.attProd,
   valueLinks: state => state.valueLinks,
   attributesArray: state => state.attributesArray
 }

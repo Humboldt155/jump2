@@ -19,7 +19,7 @@
           <b-input-group size="md">
             <b-form-input v-model.lazy="value" placeholder="код или название значения"></b-form-input>
             <b-input-group-append>
-              <b-btn variant="secondary" @click="onLoadValue">Найти</b-btn>
+              <b-btn variant="secondary">Найти</b-btn>
             </b-input-group-append>
           </b-input-group>
         </b-col>
@@ -31,33 +31,11 @@
           <b-input-group size="md">
             <b-form-input v-model.lazy="modelId" placeholder="модель"></b-form-input>
             <b-input-group-append>
-              <b-btn variant="secondary" @click="setModelLinks">Найти</b-btn>
+              <b-btn variant="secondary" >Найти</b-btn>
             </b-input-group-append>
           </b-input-group>
         </b-col>
       </b-row>
-    <b-container fluid v-for="att in attributesAll" :key="att">
-        <b-row>
-          <b-col cols="2">
-            {{ att['code'] }}
-          </b-col>
-          <b-col cols="1">
-            {{ att['is_open'] }}
-          </b-col>
-          <b-col>
-            {{ att['french_name'] }}
-          </b-col>
-          <b-col>
-            {{ att['english_name'] }}
-          </b-col>
-          <b-col>
-            {{ att['russian_name'] }}
-          </b-col>
-          <b-col>
-            {{ att['values'] }}
-          </b-col>
-        </b-row>
-    </b-container>
     </b-card>
   </b-container>
 </template>
@@ -79,15 +57,6 @@ export default {
   methods: {
   },
   computed: {
-    modelLinks () {
-      return this.$store.getters.modelLinks
-    },
-    attributesAll () {
-      return this.$store.getters.attributesAll
-    },
-    valuesAll () {
-      return this.$store.getters.valuesAll
-    }
   }
 }
 </script>

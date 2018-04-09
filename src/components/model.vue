@@ -37,7 +37,7 @@
           <!-- Подробная информация о модели в раскрывающемся списке -->
 
         </b-container>
-          <b-alert variant="info" :show="isLoaded">
+          <b-alert variant="warning" :show="isLoaded">
             <h5>Ждите, идет загрузка...</h5><br>
             <b-progress show-progress :precision="1" :value="productsQty.total" :max="totalCount" variant="warning"></b-progress>
           </b-alert>
@@ -76,7 +76,7 @@ import AnalogsComponent from './model/analogs'
 import AttributesComponent from './model/attributes'
 import ComplementaryComponent from './model/complementary'
 import ModelDetailsComponent from './model/modelDetails'
-import TableComponent from './model/table'
+import TableComponent from './model/productsTable'
 
 export default {
   name: 'model',
@@ -113,6 +113,7 @@ export default {
       this.$store.dispatch('setModelLinks', this.modelId)
       this.$store.dispatch('setProductsSelected', [])
       this.$store.commit('setAttributes', [])
+      this.$store.commit('emptyAttributesArray')
       this.$store.dispatch('setModelId', this.modelId)
       this.$store.dispatch('setProducts', this.modelId)
       this.$store.dispatch('setModelAdeo', this.modelId)
