@@ -17,7 +17,7 @@ const state = {
   productsQty: {total: 0, description: 0, noDescriptionAvs: 0},
   totalCount: 0,
   isLoaded: false,
-  isLoadAvs: true
+  isLoadAvs: false
 }
 
 // mutations

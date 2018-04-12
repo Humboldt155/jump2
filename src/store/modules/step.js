@@ -3,12 +3,13 @@ import axios from 'axios'
 const urlLinks = 'http://humboldt155.pythonanywhere.com/api/links/'
 const urlAttributes = 'http://humboldt155.pythonanywhere.com/api/attributes/'
 const urlValues = 'http://humboldt155.pythonanywhere.com/api/values/'
+const urlModels = 'http://humboldt155.pythonanywhere.com/api/models/'
 
 // initial state
 const state = {
   attributesAll: {},
   attributesArray: [],
-  attributeLinks: {},
+  attributeLinks: [],
   valueLinks: [],
   attProducts: [],
   attProd: []
@@ -39,16 +40,53 @@ const mutations = {
       }
     })
       .then(response => {
+        let links = {}
         const resp = response.data
-        state.attributeLinks = {}
+        state.attributeLinks = []
         for (let i = 0; i < resp.length; i++) {
           let model = resp[i]['model']
-          state.attributeLinks[model] = resp[i]['value']
+          links[model] = resp[i]['value']
         }
+        for (let l in links) {
+          if (links.hasOwnProperty(l)) {
+            state.attributeLinks.push({dep: '', model: l, name: '', valueId: links[l], valueName: ''})
+          }
+        }
+        state.attributeLinks = state.attributeLinks.slice(0, 100)
       })
       .catch(e => {
         this.errors.push(e)
       })
+  },
+  setLinksNames (state) {
+    for (let i = 0; i < state.attributeLinks.length; i++) {
+      let link = state.attributeLinks[i]
+      axios.get(urlModels, {
+        params: {
+          id: link.model
+        }
+      })
+        .then(response => {
+          const resp = response.data
+          state.attributeLinks[i]['name'] = resp[0].russian_name
+          state.attributeLinks[i]['dep'] = resp[0].model_group_adeo.slice(4, 6)
+        })
+        .catch(e => {
+          this.errors.push(e)
+        })
+      axios.get(urlValues, {
+        params: {
+          id: link.valueId
+        }
+      })
+        .then(response => {
+          const resp = response.data
+          state.attributeLinks[i]['valueName'] = resp[0].russian_name
+        })
+        .catch(e => {
+          this.errors.push(e)
+        })
+    }
   },
   setValues (state, att) {
     if (state.attributesAll[att]['is_open'] === 'открытый') {
@@ -119,15 +157,6 @@ const mutations = {
         list[att].qty = attProd.length > 0 ? attProd.length : ''
         list[att].percentage = attProd.length > 0 ? Math.round(attProd.length / totalQty * 100) : ''
         list[att]['_cellVariants'].id = attProd.length > 0 ? 'light' : 'secondary'
-        // for (let i = 0; i < list[att]['values'].length; i++) {
-        //   let name = list[att]['values'][i]['russian_name']
-        //   let valProd = attProd.filter(function (pV) {
-        //   // Применяем фильтр, чтобы исключить из списка ненужные значения
-        //     return pV[att].toString() === name.toString()
-        //   })
-        //   list[att]['values'][i]['qty'] = valProd.length > 0
-        //   console.log(list[att]['values'][i]['qty'])
-        // }
         state.attributesArray.push(list[att])
       }
     }

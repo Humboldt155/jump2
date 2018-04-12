@@ -34,8 +34,19 @@
                 <b-col>
                   <b-btn v-b-toggle="'collapse2'" size="sm" @click="onLoadAttLinks(row.item.id)" class="mr-2" variant="outline-info">показать связи</b-btn>
                     <b-collapse id="collapse2">
-                      <b-card>
-                        {{ (currentAtt === row.item.id) ? attributeLinks : '' }}
+                      <b-card v-if="currentAtt !== row.item.id"></b-card>
+                      <b-card v-else>
+                        <h4>Список моделей, в которых встречается атрибут {{ row.item.id }}</h4>
+                        <p><b-badge variant="warning">ограничение на загрузку - 100 штук</b-badge></p>
+                        <b-btn size="sm" @click="setLinksNames" variant="outline-info">загрузить наименования</b-btn>
+                        <b-table
+                          bordered
+                          responsive
+                          hover
+                          small
+                          :items="attributeLinks"
+                          :fields="fieldsLinks"
+                        ></b-table>
                       </b-card>
                     </b-collapse>
                 </b-col>
@@ -65,37 +76,6 @@
           </b-card>
         </template>
     </b-table>
-    <!--список артикулов-->
-    <!--<b-table-->
-      <!--bordered-->
-      <!--responsive-->
-      <!--hover-->
-      <!--small-->
-      <!--caption-top-->
-      <!--:items="productsSelected"-->
-      <!--:fields="fieldsProd"-->
-    <!--&gt;-->
-      <!--<template slot="table-caption">-->
-        <!--<b-container fluid>-->
-          <!--<b-row>-->
-            <!--<b-col cols="8">-->
-              <!--<h5><b-badge variant="info">Список артикулов:</b-badge> {{ att }} = {{ val }}</h5>-->
-            <!--</b-col>-->
-            <!--<b-col>-->
-              <!--<download-excel-->
-                <!--class   = "btn btn-default"-->
-                <!--:data   = "productsSelected"-->
-                <!--:fields = "columns"-->
-                <!--:name    = "file_name">-->
-                <!--<b-button size="sm" variant="info">-->
-                  <!--Download EXCEL-->
-                <!--</b-button>-->
-              <!--</download-excel>-->
-            <!--</b-col>-->
-          <!--</b-row>-->
-        <!--</b-container>-->
-      <!--</template>-->
-    <!--</b-table>-->
   </b-container>
 </template>
 
@@ -120,6 +100,13 @@ export default {
         {key: 'qty', label: 'Артикулы(шт)', sortable: true},
         {key: 'products', label: 'Список'}
       ],
+      fieldsLinks: [
+        {key: 'dep', label: 'Dep', sortable: true},
+        {key: 'model', label: 'Код модели', sortable: true},
+        {key: 'name', label: 'Значение', sortable: true},
+        {key: 'valueId', label: 'Пример значения (код)', sortable: true},
+        {key: 'valueName', label: 'Название значения'}
+      ],
       // att: '',
       // val: '',
       // fieldsProd: this.$store.getters.fieldsProd,
@@ -128,6 +115,9 @@ export default {
     }
   },
   methods: {
+    setLinksNames () {
+      this.$store.commit('setLinksNames')
+    },
     onLoadAttributes () {
       this.$store.commit('setAttProducts', this.$store.getters.products)
       this.$store.commit('setAttributesArray', this.$store.getters.products)

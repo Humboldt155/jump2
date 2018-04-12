@@ -2,16 +2,32 @@
   <b-container fluid>
     <b-container fluid>
       <b-card sub-title="Model Adeo">
+        <b-container fluid>
+          <b-row>
+            <b-col cols="6">
+              <b-input-group size="md" prepend="MOD_">
 
-        <b-input-group size="md" prepend="MOD_">
+                <b-form-input v-model.lazy="modelId" placeholder="введите номер, н.п. 200767 и нажмите ПРИМЕНИТЬ"></b-form-input>
 
-          <b-form-input v-model.lazy="modelId" placeholder="введите номер, н.п. 200767 и нажмите ПРИМЕНИТЬ"></b-form-input>
+                <b-input-group-append>
+                  <b-btn variant="secondary" @click="onLoadModel">применить</b-btn>
+                </b-input-group-append>
 
-          <b-input-group-append>
-            <b-btn variant="secondary" @click="onLoadModel">применить</b-btn>
-          </b-input-group-append>
-
-        </b-input-group>
+              </b-input-group>
+            </b-col>
+          </b-row>
+          <b-row>
+            <b-col>
+              <b-form-checkbox
+                id="checkbox1"
+                v-model="isLoadAvs"
+                @change="setIsLoadAvs">
+                загружать avs
+              </b-form-checkbox>
+              {{ isLoadAvs }}
+            </b-col>
+          </b-row>
+        </b-container>
 
         <b-container fluid>
           <br>
@@ -144,6 +160,9 @@ export default {
     },
     productsQty () {
       return this.$store.getters.productsQty
+    },
+    isLoadAvs () {
+      return this.$store.getters.isLoadAvs
     }
   },
   components: {
