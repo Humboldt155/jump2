@@ -5,14 +5,6 @@ const urlAttributes = 'http://humboldt155.pythonanywhere.com/api/attributes/'
 const urlValues = 'http://humboldt155.pythonanywhere.com/api/values/'
 const urlModels = 'http://humboldt155.pythonanywhere.com/api/models/'
 
-function wait (ms) {
-  var start = new Date().getTime()
-  var end = start
-  while (end < start + ms) {
-    end = new Date().getTime()
-  }
-}
-
 // initial state
 const state = {
   attributesAll: {},
