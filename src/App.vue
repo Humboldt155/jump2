@@ -8,7 +8,6 @@
         <b-navbar-nav>
           <b-nav-item href="#/model">Модель</b-nav-item>
           <b-nav-item href="#/product">Поиск артикула</b-nav-item>
-          <b-nav-item href="#/search">Поиск модели</b-nav-item>
           <b-nav-item href="#/models-list">Список моделей</b-nav-item>
           <b-nav-item href="#/family">Семьи</b-nav-item>
         </b-navbar-nav>

@@ -4,16 +4,29 @@
       <b-card sub-title="Model Adeo">
         <b-container fluid>
           <b-row>
-            <b-col cols="6">
+            <b-col cols="8">
               <b-input-group size="md" prepend="MOD_">
 
-                <b-form-input v-model.lazy="modelId" placeholder="введите номер, н.п. 200767 и нажмите ПРИМЕНИТЬ"></b-form-input>
+                <b-form-input v-model.lazy="modelId" placeholder="введите номер или название"></b-form-input>
 
                 <b-input-group-append>
                   <b-btn variant="secondary" @click="onLoadModel">применить</b-btn>
                 </b-input-group-append>
 
               </b-input-group>
+              <div v-if="modelId.length>=3">
+                <b-form-group>
+                  <b-form-radio-group id="btnradios3"
+                                      buttons
+                                      button-variant="outline-secondary"
+                                      stacked
+                                      v-model="modelId"
+                                      :options="options"
+                                      name="radioBtnStacked">
+                  </b-form-radio-group>
+                </b-form-group>
+              </div>
+              <div v-else></div>
             </b-col>
           </b-row>
           <b-row>
@@ -160,6 +173,17 @@ export default {
     },
     isLoadAvs () {
       return this.$store.getters.isLoadAvs
+    },
+    options () {
+      let searchText = this.modelId.toString().toLowerCase()
+      let options = this.$store.getters.options
+      if (options.length === 1) {
+        return [{value: 0, text: ''}]
+      } else {
+        return options.filter(function (f) {
+          return f.text.toString().toLowerCase().includes(searchText)
+        })
+      }
     }
   },
   components: {

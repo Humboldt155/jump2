@@ -8,7 +8,8 @@ const state = {
   fileName: '',
   modelGroups: {},
   modelsList: {id: '', list: []},
-  subDepartment: {}
+  subDepartment: {},
+  options: []
 
 }
 
@@ -28,6 +29,9 @@ const mutations = {
   },
   setFileName (state, fileName) {
     state.fileName = fileName
+  },
+  setOptions (state, options) {
+    state.options = options
   }
 }
 
@@ -37,7 +41,8 @@ const getters = {
   modelAdeo: state => state.modelAdeo,
   allModels: state => state.allModels,
   modelsList: state => state.modelsList,
-  fileName: state => state.fileName
+  fileName: state => state.fileName,
+  options: state => state.options
 }
 
 // actions
@@ -118,6 +123,12 @@ const actions = {
   setAllModels (vuexContext) {
     axios.get('http://humboldt155.pythonanywhere.com/api/models/')
       .then(response => {
+        let resp = response.data
+        let options = []
+        for (let i = 0; i < resp.length; i++) {
+          options.push({value: resp[i].id.slice(4), text: resp[i].russian_name})
+        }
+        vuexContext.commit('setOptions', options)
         vuexContext.commit('setAllModels', response.data)
       })
       .catch(e => {

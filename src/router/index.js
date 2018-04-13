@@ -5,7 +5,6 @@ import ModelsList from '@/components/modelsList'
 import Product from '@/components/product'
 import home from '@/components/home'
 import opusdb from '@/components/opusdb'
-import search from '@/components/search'
 import step from '@/components/step'
 import family from '@/components/family'
 
@@ -32,11 +31,6 @@ export default new Router({
       path: '/product/',
       name: 'product',
       component: Product
-    },
-    {
-      path: '/search/',
-      name: 'search',
-      component: search
     },
     {
       path: '/opusdb/',
