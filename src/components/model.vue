@@ -24,7 +24,6 @@
                 @change="setIsLoadAvs">
                 загружать avs
               </b-form-checkbox>
-              {{ isLoadAvs }}
             </b-col>
           </b-row>
         </b-container>
@@ -133,8 +132,6 @@ export default {
       this.$store.dispatch('setModelId', this.modelId)
       this.$store.dispatch('setProducts', this.modelId)
       this.$store.dispatch('setModelAdeo', this.modelId)
-      const mg = this.$store.getters.modelGroup
-      this.$store.dispatch('setModelGroupId', mg.toString())
     },
     pushModel: function (id) {
       this.modelId = id.slice(4)

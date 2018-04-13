@@ -16,10 +16,10 @@
 
       <h5> {{ modelsList.id }}</h5>
 
-      <b-container fluid v-for="mg in modelsList.list" :key="mg">
+      <b-container fluid v-for="mg in modelsList.list" :key="mg.id">
         <h6>{{ mg.id }}</h6>
           <b-container fluid>
-            <b-row class="my-1" v-for="modelH in mg.list" :key="modelH">
+            <b-row class="my-1" v-for="modelH in mg.list" :key="modelH.id">
               <b-col cols="6">
                 <b-button v-if="modelH.id===modelAdeo.id" size="sm" variant="warning" @click="pushModel(modelH.id)"> {{ modelH.id }} </b-button>
                 <b-button v-else size="sm" variant="outline-info" @click="pushModel(modelH.id)"> {{ modelH.id }} </b-button>
@@ -52,8 +52,6 @@ export default {
       this.$store.dispatch('setModelId', this.modelId)
       this.$store.dispatch('setProducts', this.modelId)
       this.$store.dispatch('setModelAdeo', this.modelId)
-      const mg = this.$store.getters.modelGroup
-      this.$store.dispatch('setModelGroupId', mg.toString())
     },
     pushModel: function (id) {
       this.modelId = id.slice(4)

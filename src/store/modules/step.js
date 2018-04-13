@@ -5,6 +5,14 @@ const urlAttributes = 'http://humboldt155.pythonanywhere.com/api/attributes/'
 const urlValues = 'http://humboldt155.pythonanywhere.com/api/values/'
 const urlModels = 'http://humboldt155.pythonanywhere.com/api/models/'
 
+function wait (ms) {
+  var start = new Date().getTime()
+  var end = start
+  while (end < start + ms) {
+    end = new Date().getTime()
+  }
+}
+
 // initial state
 const state = {
   attributesAll: {},
@@ -90,6 +98,7 @@ const mutations = {
   },
   setValues (state, att) {
     if (state.attributesAll[att]['is_open'] === 'открытый') {
+      state.attributesAll[att]['values'] = []
       let valuesDict = {}
       for (let i = 0; i < state.attProd.length; i++) {
         let value = state.attProd[i][att]
@@ -106,9 +115,19 @@ const mutations = {
         }
       }
     } else {
+      let valuesList = []
+      let attsDict = {}
+      for (let i = 0; i < state.attProd.length; i++) {
+        if (state.attProd[i][att] in attsDict) {
+          attsDict[state.attProd[i][att]] = attsDict[state.attProd[i][att]] + 1
+        } else {
+          attsDict[state.attProd[i][att]] = 1
+        }
+      }
       let values = state.attributesAll[att]['values']
       for (let i = 0; i < values.length; i++) {
         let valueID = values[i].id
+        valuesList.push(values[i].russian_name)
         // Обращаемся к таблице значений, чтобы получить данные о значениях
         axios.get(urlValues, {
           params: {
@@ -121,11 +140,7 @@ const mutations = {
             state.attributesAll[att]['values'][i]['french_name'] = respV['french_name']
             state.attributesAll[att]['values'][i]['english_name'] = respV['english_name']
             state.attributesAll[att]['values'][i]['russian_name'] = respV['russian_name']
-            let name = respV['russian_name']
-            let valProd = state.attProd.filter(function (pV) {
-              return pV[att].toString() === name.toString()
-            })
-            state.attributesAll[att]['values'][i]['qty'] = valProd.length > 0 ? valProd.length : ''
+            state.attributesAll[att]['values'][i]['qty'] = attsDict[respV['russian_name']]
           })
           .catch(e => {
             this.errors.push(e)

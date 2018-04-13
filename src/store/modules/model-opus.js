@@ -5,6 +5,9 @@ const firstCols = ['Код продукта', 'ATT_12963 - Название на
 
 const attCodeSlice = '/foundation/v2/attributes/'.length
 
+const urlWithAVS = ''
+const urlWithoutAVS = '%20AND%20NOT%20@(lifeCycle-AVSDate@PimStd):*'
+
 const reqQty = 50
 
 // initial state
@@ -62,6 +65,7 @@ const getters = {
 // actions
 const actions = {
   setProducts (vuexContext, modelId) {
+    let urlAVS = vuexContext.getters.isLoadAvs ? urlWithAVS : urlWithoutAVS
     vuexContext.commit('setTotalCount', -1)
     let productsNew = []
     let columns = {
@@ -79,14 +83,17 @@ const actions = {
     let pQ = {total: 0, avs: 0, description: 0, noDescriptionAvs: 0}
     let att = new Set() // Набор всех возможных аттрибутов
     let totalCount = -1
-    axios.get('https://wikeo:oekiw@webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize=1&startFrom=1&filter=modelCode%3A'
-      .concat(modelId, '%20AND%20NOT%20@(lifeCycle-AVSDate@PimStd):*&expand=attributes&context=lang%3Aru'), {
+    console.log('https://wikeo:oekiw@webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize=' +
+      '1&startFrom=1&filter=modelCode%3A'
+        .concat(modelId, urlAVS, '&expand=attributes'))
+    axios.get('https://wikeo:oekiw@webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize=' +
+      '1&startFrom=1&filter=modelCode%3A'
+        .concat(modelId, urlAVS, '&expand=attributes'), {
       headers: {
         'Authorization': 'Basic d2lrZW86b2VraXc'
       }
     })
       .then(response => {
-        console.log(response.data)
         vuexContext.commit('setTotalCount', response.data.totalCount)
       })
       .catch(e => {
@@ -96,7 +103,8 @@ const actions = {
     for (let req = 0; req < 150; req++) {
       if (totalCount === pQ.total) break
       axios.get('https://wikeo:oekiw@webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize='
-        .concat(reqQty, '&startFrom=', 1 + req * reqQty, '&filter=NOT%20@(lifeCycle-AVSDate@PimStd):*%20AND%20modelCode%3A', modelId, '&mode=mask&mask=Jump,Characteristics&expand=attributes'), {
+        .concat(reqQty, '&startFrom=', 1 + req * reqQty, '&filter=modelCode%3A'
+          .concat(modelId, urlAVS, '&mode=mask&mask=Jump,Characteristics&expand=attributes')), {
         headers: {
           'Authorization': 'Basic d2lrZW86b2VraXc'
         }
@@ -108,7 +116,6 @@ const actions = {
           for (let i = 0; i < resp.length; i++) {
             // Создаем объект, в котором будем хранить аттрибуты и значения выбранного продукта
             let product = {}
-
             pQ['total'] += 1 // + Товаров Всего
 
             // Лист всех атрибутов выбранного продукта
@@ -177,8 +184,8 @@ const actions = {
             }
           }
         })
-        .catch(e => {
-          this.errors.push(e)
+        .catch(e2 => {
+          this.errors.push(e2)
         })
       // if (totalCount === pQ.total) break
     }

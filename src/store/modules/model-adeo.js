@@ -5,7 +5,6 @@ const state = {
   modelId: '',
   modelAdeo: {'model_group_adeo': ''},
   allModels: [],
-  modelGroup: {},
   fileName: '',
   modelGroups: {},
   modelsList: {id: '', list: []},
@@ -124,9 +123,6 @@ const actions = {
       .catch(e => {
         this.errors.push(e)
       })
-  },
-  setModelGroupId (vuexContext, closeModels) {
-    vuexContext.commit('setCloseModels', closeModels)
   }
 }
 

@@ -64,8 +64,6 @@ export default {
       this.$store.commit('emptyAttributesArray')
       this.$store.dispatch('setProducts', id)
       this.$store.dispatch('setModelAdeo', id)
-      const mg = this.$store.getters.modelGroup
-      this.$store.dispatch('setModelGroupId', mg.toString())
     },
     onLoadProduct () {
       this.$store.dispatch('setProductAttributes', this.productId)
