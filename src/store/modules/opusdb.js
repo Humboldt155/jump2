@@ -1,4 +1,6 @@
-import axios from 'axios/index'
+import axios from 'axios'
+import * as https from 'https'
+
 
 // Перечень кодов атрибутов, которые не нужны для выборки (Описание, Вес, и др.)
 const excludeAttributes = [
@@ -9,6 +11,10 @@ const excludeAttributes = [
   'logistic-grossWeight',
   '01305'
 ]
+
+const agent = new https.Agent({
+  rejectUnauthorized: false
+})
 
 // Перечень меток атрибутов на других языках, которые не нужны для выборки
 const excludeLang = [
@@ -43,7 +49,8 @@ const mutations = {
       axios.get('https://wikeo:oekiw@webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize='
         .concat(productsPerCycle, '&startFrom=', 1 + (req * productsPerCycle), '&mode=mask&mask=Characteristics&filter=NOT%20@(lifeCycle-AVSDate@PimStd):*&expand=attributes'), {
         headers: {
-          'Authorization': 'Basic d2lrZW86b2VraXc'
+          'Authorization': 'Basic d2lrZW86b2VraXc',
+          httpsAgent: agent
         }
       })
         .then(response => {

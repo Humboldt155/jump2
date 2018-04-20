@@ -1,6 +1,11 @@
 import axios from 'axios'
+import * as https from 'https'
 
 const attCodeSlice = '/foundation/v2/attributes/'.length
+
+const agent = new https.Agent({
+  rejectUnauthorized: false
+})
 
 // initial state
 const state = {
@@ -39,7 +44,8 @@ const actions = {
   setProductAttributes (vuexContext, productId) {
     axios.get('https://wikeo:oekiw@webtopdata2.lmru.opus.adeo.com:5000/business/v2/products/'.concat(productId, '_PimStd_Product'), {
       headers: {
-        'Authorization': 'Basic d2lrZW86b2VraXc'
+        'Authorization': 'Basic d2lrZW86b2VraXc',
+        httpsAgent: agent
       }
     })
       .then(response => {

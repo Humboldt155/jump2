@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Model from '@/components/model'
-import ModelsList from '@/components/modelsList'
 import Product from '@/components/product'
 import home from '@/components/home'
 import opusdb from '@/components/opusdb'
@@ -21,11 +20,6 @@ export default new Router({
       path: '/model/',
       name: 'model',
       component: Model
-    },
-    {
-      path: '/models-list/',
-      name: 'models-list',
-      component: ModelsList
     },
     {
       path: '/product/',

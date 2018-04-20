@@ -1,7 +1,11 @@
 import axios from 'axios'
-// import https from 'https'
+import * as https from 'https'
 
-const firstCols = ['Код продукта', 'ATT_12963 - Название на сайте', 'Отдел', 'ATT_01022 - Описание']
+const agent = new https.Agent({
+  rejectUnauthorized: false
+})
+
+const firstCols = ['Код продукта', 'ATT_12963 - Название на сайте', 'Выгружается на сайт', 'ATT_01022 - Описание']
 
 const attCodeSlice = '/foundation/v2/attributes/'.length
 
@@ -71,26 +75,24 @@ const actions = {
     let columns = {
       'Код продукта': 'Код продукта',
       'ATT_12963 - Название на сайте': 'ATT_12963 - Название на сайте',
-      'Отдел': 'Отдел',
+      'Выгружается на сайт': 'Выгружается на сайт',
       'ATT_01022 - Описание': 'ATT_01022 - Описание'
     }
     let fields = [
       {key: 'Код продукта', label: 'Код продукта', sortable: true},
       {key: 'ATT_12963 - Название на сайте', label: 'Название на сайте ________________________________________________', sortable: true},
-      {key: 'Отдел', label: 'Отдел', sortable: true},
+      {key: 'Выгружается на сайт', label: 'Выгружается на сайт', sortable: true},
       'ATT_01022 - Описание'
     ]
     let pQ = {total: 0, avs: 0, description: 0, noDescriptionAvs: 0}
     let att = new Set() // Набор всех возможных аттрибутов
     let totalCount = -1
-    console.log('https://wikeo:oekiw@webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize=' +
-      '1&startFrom=1&filter=modelCode%3A'
-        .concat(modelId, urlAVS, '&expand=attributes'))
     axios.get('https://wikeo:oekiw@webtopdata2.lmru.opus.adeo.com:5000/business/v2/products?pageSize=' +
       '1&startFrom=1&filter=modelCode%3A'
         .concat(modelId, urlAVS, '&expand=attributes'), {
       headers: {
-        'Authorization': 'Basic d2lrZW86b2VraXc'
+        'Authorization': 'Basic d2lrZW86b2VraXc',
+        httpsAgent: agent
       }
     })
       .then(response => {
@@ -106,7 +108,8 @@ const actions = {
         .concat(reqQty, '&startFrom=', 1 + req * reqQty, '&filter=modelCode%3A'
           .concat(modelId, urlAVS, '&mode=mask&mask=Jump,Characteristics&expand=attributes')), {
         headers: {
-          'Authorization': 'Basic d2lrZW86b2VraXc'
+          'Authorization': 'Basic d2lrZW86b2VraXc',
+          httpsAgent: agent
         }
       })
         .then(response => {
@@ -143,7 +146,7 @@ const actions = {
                 attConcat = 'ATT_01022 - Описание'
                 pQ['description'] += 1
               }
-              if (attCode === 'ATT_3') attConcat = 'Отдел'
+              if (attCode === 'ATT_searchable') attConcat = 'Выгружается на сайт'
               if (attCode === 'ATT_6') {
                 attConcat = 'Дата AVS'
                 pQ['avs'] += 1
@@ -152,6 +155,9 @@ const actions = {
               let attValue = attributes[j].value[0]
               if (Number(attValue) === attValue && attValue % 1 !== 0) {
                 attValue = attValue.toString().replace('.', ',')
+              }
+              if (attCode === 'ATT_searchable') {
+                attValue = ((attValue === true) ? 'да' : 'нет')
               }
               product[attConcat] = attValue
               att.add(attConcat)
