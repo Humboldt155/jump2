@@ -1,11 +1,11 @@
 <template>
+
     <b-card title="Настройка аналогов">
       <b-container fluid>
         <!--Панель выбора-->
         <b-row>
           <b-col>
             Отдел: <strong>{{ selected }}</strong>
-            <br>
             <br>
           </b-col>
         </b-row>
@@ -26,7 +26,7 @@
 
         <!--Атрибуты-->
         <br>
-        Атрибуты
+        Атрибуты<font-awesome-icon :icon="icon" />
         <b-row>
           <b-col>
             <b-list-group>
@@ -39,26 +39,39 @@
                       {{ att.code }} - {{ att.name }}
                     </b-col>
                     <!--Тип-->
-                    <b-col cols="3">
-                      <b-badge pill :variant="types[att.type][1]">{{ types[att.type][0] }}</b-badge>
+                    <b-col cols="2">
+                      <b-badge pill :variant="types[att.type][1]">{{ types[att.type][0] }}&#8195;<font-awesome-icon :icon="icons[types[att.type][2]]" /></b-badge>
                     </b-col>
 
                     <!--Настройк, кнопка-->
                     <b-col cols="2">
                       <b-btn @click="att.show_settings = !att.show_settings"
-                             size="sm" variant="outline-info">Настроить</b-btn>
+                             size="sm" variant="outline-info">настроить</b-btn>
+                     </b-col>
+                    <!--Удалить-->
+                    <b-col cols="1">
+                      <b-btn v-b-tooltip.hover title="Удалить атрибут" size="sm" variant="outline-warning">-</b-btn>
                     </b-col>
                   </b-row>
                   <!--Настройка атрибута-->
                   <b-row>
                     <b-col v-if="att.show_settings">
-                      Настроить
+                      <b-container fluid>
+                        <b-row>
+                          Настройка значений:
+                        </b-row>
+                        <b-row>
+
+                        </b-row>
+                      </b-container>
                     </b-col>
                     <b-row v-else>
                     </b-row>
                   </b-row>
 
                 </b-container>
+
+              <!--Добавить атрибут-->
               </b-list-group-item>
               <b-list-group-item variant="info" button>
                 <b-row>
@@ -66,8 +79,16 @@
                   <b-col>добавить атрибут +</b-col>
                 </b-row>
               </b-list-group-item>
-
             </b-list-group>
+          </b-col>
+        </b-row>
+        <br>
+        <b-row>
+          <b-col cols="10">
+            <b-button variant="outline-info" size="sm">Сохранить изменения</b-button>
+          </b-col>
+          <b-col>
+            <b-button variant="outline-secondary" size="sm">Сбросить</b-button>
           </b-col>
         </b-row>
 
@@ -89,16 +110,22 @@
 </template>
 
 <script>
+
+import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
+import faLockOpen from '@fortawesome/fontawesome-free-solid/faLockOpen'
+import faLock from '@fortawesome/fontawesome-free-solid/faLock'
+import faTrash from '@fortawesome/fontawesome-free-solid/faTrash'
+
 export default {
   name: 'analogs',
   data () {
     return {
       selected: null,
       types: {
-        0: ['открытый, числовой', 'primary'],
-        1: ['открытый, текстовый', 'warning'],
-        2: ['закрытый, числовой', 'info'],
-        3: ['закрытый, текстовый', 'secondary']
+        0: ['число', 'primary', 0],
+        1: ['текст', 'warning', 0],
+        2: ['число', 'primary', 1],
+        3: ['текст', 'secondary', 1]
       },
       attributes: [
         {code: 'ATT_102030', name: 'Цвет ручки', type: 3, groups: [], show_settings: false},
@@ -128,6 +155,17 @@ export default {
   },
   mounted () {
     this.$store.dispatch('setAllModels')
+  },
+  computed: {
+    icons () {
+      return [faLockOpen, faLock]
+    },
+    faTrash () {
+      return faTrash
+    }
+  },
+  components: {
+    FontAwesomeIcon
   }
 }
 </script>
