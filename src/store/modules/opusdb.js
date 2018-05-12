@@ -1,7 +1,6 @@
 import axios from 'axios'
 import * as https from 'https'
 
-
 // Перечень кодов атрибутов, которые не нужны для выборки (Описание, Вес, и др.)
 const excludeAttributes = [
   'sourceCountryCode',

@@ -4,23 +4,28 @@
       <b-container fluid>
         <!--Панель выбора-->
         <b-row>
+          <b-col cols="5">
+            Отдел: &#8195;<strong>{{ department }}</strong>
+            <br>
+          </b-col>
           <b-col>
-            Отдел: <strong>{{ selected }}</strong>
+            Модель:
             <br>
           </b-col>
         </b-row>
         <b-row>
           <b-col cols="2">
-            <b-form-select v-model="selected" :options="options" class="mb-3" size="sm"></b-form-select>
+            <b-form-select v-model="department" :options="departments" class="mb-3" size="sm"></b-form-select>
+          </b-col>
+          <b-col cols="2"></b-col>
+          <b-col cols="1">
+            <b-btn size="sm" variant="outline-info" @click="(model === 0 || model === null) ? model=(models.length - 1) : model--"> &#8195;&laquo;&#8195; </b-btn>
+          </b-col>
+          <b-col cols="6">
+            <b-form-select v-model="model" :options="models" size="sm"></b-form-select>
           </b-col>
           <b-col cols="1">
-            <b-btn size="sm"> &#8195;&laquo;&#8195; </b-btn>
-          </b-col>
-          <b-col>
-            <b-form-select v-model="selected" :options="options" class="mb-3" size="sm"></b-form-select>
-          </b-col>
-          <b-col cols="1">
-            <b-btn size="sm">&#8195;&raquo;&#8195;</b-btn>
+            <b-btn size="sm" variant="outline-info" @click="model === (models.length-1) ? model=0 : model++">&#8195;&raquo;&#8195;</b-btn>
           </b-col>
         </b-row>
 
@@ -120,7 +125,8 @@ export default {
   name: 'analogs',
   data () {
     return {
-      selected: null,
+      department: 'Краски',
+      model: 0,
       types: {
         0: ['число', 'primary', 0],
         1: ['текст', 'warning', 0],
@@ -133,7 +139,7 @@ export default {
         {code: 'ATT_483764', name: 'Количество скоростей', type: 2, groups: [], show_settings: false},
         {code: 'ATT_198002', name: 'Комплектация', type: 1, groups: [], show_settings: false}
       ],
-      options: [
+      departments: [
         { value: '', text: '--' },
         { value: 'Стройматериалы', text: '01' },
         { value: 'Столярные изделия', text: '02' },
@@ -150,6 +156,16 @@ export default {
         { value: 'Освещение', text: '13' },
         { value: 'Хранение', text: '14' },
         { value: 'Кухни', text: '15' }
+      ],
+      models: [
+        {value: '0', text: 'MOD_200767 - Краска для мебели'},
+        {value: '1', text: 'MOD_200768 - Монтажная пена'},
+        {value: '2', text: 'MOD_200769 - Краска для стен и потолков'},
+        {value: '3', text: 'MOD_200770 - Эмали универсальные'},
+        {value: '4', text: 'MOD_200771 - Кисточки'},
+        {value: '5', text: 'MOD_200772 - Бюгели и валики'},
+        {value: '6', text: 'MOD_200773 - Ведра'},
+        {value: '7', text: 'MOD_200774 - Клей монтажный'}
       ]
     }
   },

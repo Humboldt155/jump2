@@ -60,7 +60,6 @@ const actions = {
         this.errors.push(e)
       })
     // Обращаемся циклом к списку товаров в модели
-    let reqQty = 30
     let products = []
     for (let req = 0; req < 1; req++) {
       axios.get('https://wikeo:oekiw@webtopdata.lmru.opus.adeo.com:5000/business/v2/' +
@@ -116,7 +115,6 @@ const actions = {
           this.errors.push(e2)
         })
       vuexContext.commit('setFamilyProducts', products)
-
     }
   },
   setFamilies (vuexContext) {

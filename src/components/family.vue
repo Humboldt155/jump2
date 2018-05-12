@@ -52,7 +52,7 @@ export default {
     }
   },
   methods: {
-    setFamilyProducts(familyId) {
+    setFamilyProducts (familyId) {
       this.$store.commit('setFamilyProducts', [])
       this.$store.dispatch('setFamilyProducts', familyId)
     }
