@@ -6,6 +6,7 @@ import home from '@/components/home'
 import opusdb from '@/components/opusdb'
 import step from '@/components/step'
 import family from '@/components/family'
+import analogs from '@/components/analogs'
 
 Vue.use(Router)
 
@@ -40,6 +41,11 @@ export default new Router({
       path: '/family/',
       name: 'family',
       component: family
+    },
+    {
+      path: '/analogs/',
+      name: 'analogs',
+      component: analogs
     }
   ]
 })

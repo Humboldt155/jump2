@@ -7,6 +7,7 @@ import product from './modules/product'
 import opusdb from './modules/opusdb'
 import step from './modules/step'
 import family from './modules/family'
+import analogs from './modules/analogs'
 
 Vue.use(Vuex)
 
@@ -18,6 +19,7 @@ export const store = new Vuex.Store({
     opusdb,
     product,
     step,
-    family
+    family,
+    analogs
   }
 })

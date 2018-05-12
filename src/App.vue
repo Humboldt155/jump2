@@ -9,6 +9,7 @@
           <b-nav-item href="#/model">Модель</b-nav-item>
           <b-nav-item href="#/product">Поиск артикула</b-nav-item>
           <b-nav-item href="#/family">Семьи</b-nav-item>
+          <b-nav-item href="#/analogs">Аналоги</b-nav-item>
         </b-navbar-nav>
         <b-navbar-nav class="ml-auto">
           <b-nav-item href="#/step">STEP</b-nav-item>

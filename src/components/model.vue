@@ -81,9 +81,6 @@
           <b-tab title="Атрибуты" :title-link-class="linkClass(1)">
             <jump-model-attributes/>
           </b-tab>
-          <b-tab title="Аналоги" :title-link-class="linkClass(2)">
-            <jump-model-analogs/>
-          </b-tab>
           <b-tab title="Комплементы" :title-link-class="linkClass(3)">
             <jump-model-complementary/>
           </b-tab>
@@ -100,7 +97,6 @@
 
 import SearchTemplate from './model/SearchTemplate.vue'
 
-import AnalogsComponent from './model/analogs'
 import AttributesComponent from './model/attributes'
 import ComplementaryComponent from './model/complementary'
 import ModelDetailsComponent from './model/modelDetails'
@@ -187,7 +183,6 @@ export default {
     }
   },
   components: {
-    'jump-model-analogs': AnalogsComponent,
     'jump-model-attributes': AttributesComponent,
     'jump-model-complementary': ComplementaryComponent,
     'jump-model-model-details': ModelDetailsComponent,
