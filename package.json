@@ -13,8 +13,8 @@
   "dependencies": {
     "autocomplete-vue": "^1.0.3",
     "axios": "^0.18.0",
-    "bootstrap": "^4.0.0",
-    "bootstrap-vue": "^2.0.0-rc.6",
+    "bootstrap": "^4.1.1",
+    "bootstrap-vue": "^2.0.0-rc.9",
     "jquery": "^3.3.1",
     "v-autocomplete": "^1.8.2",
     "vue": "^2.5.16",
